@@ -28,6 +28,8 @@
     "url": "https://github.com/Rudra-Tiwari-codes/Blog-Aggregator.git"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
     "concurrently": "^8.2.2"
   }
 }
