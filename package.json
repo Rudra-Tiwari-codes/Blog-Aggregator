@@ -1,0 +1,33 @@
+{
+  "name": "blog-aggregator",
+  "version": "1.0.0",
+  "description": "AI-powered blog aggregator from Medium and Blogger",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install --prefix server && npm install --prefix client",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "build:client": "npm run build --prefix client",
+    "start:server": "npm start --prefix server",
+    "start:client": "npm run preview --prefix client"
+  },
+  "keywords": [
+    "blog",
+    "aggregator",
+    "ai",
+    "rss",
+    "medium",
+    "blogger",
+    "openai"
+  ],
+  "author": "Rudra Tiwari",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rudra-Tiwari-codes/Blog-Aggregator.git"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
