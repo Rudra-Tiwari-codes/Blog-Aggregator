@@ -36,14 +36,20 @@ const format = winston.format.combine(
 );
 
 // Define transports
-const transports = [
-    new winston.transports.Console(),
-    new winston.transports.File({
-        filename: 'logs/error.log',
-        level: 'error',
-    }),
-    new winston.transports.File({ filename: 'logs/combined.log' }),
-];
+// Define transports
+const transports = [new winston.transports.Console()];
+
+// Only add file transports if NOT in Vercel environment
+// Vercel has a read-only file system (except /tmp)
+if (!process.env.VERCEL) {
+    transports.push(
+        new winston.transports.File({
+            filename: 'logs/error.log',
+            level: 'error',
+        })
+    );
+    transports.push(new winston.transports.File({ filename: 'logs/combined.log' }));
+}
 
 // Create logger
 const logger = winston.createLogger({
