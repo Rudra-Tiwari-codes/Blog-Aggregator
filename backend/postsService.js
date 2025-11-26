@@ -18,19 +18,26 @@ let lastFetch = null;
  * Load cached posts from file
  */
 async function loadFromFile() {
-  if (process.env.VERCEL) {
-    return null;
-  }
-
+  // Always try to load from file, but gracefully handle failure
+  // This allows it to work on Vercel if /tmp or other writable paths are used in future
   try {
     const cacheFile = process.env.CACHE_FILE || constants.CACHE_FILE_PATH;
     const dataPath = path.join(process.cwd(), cacheFile);
+
+    // Check if file exists first to avoid throwing error
+    try {
+      await fs.access(dataPath);
+    } catch {
+      return null; // File doesn't exist, just return null
+    }
+
     const data = await fs.readFile(dataPath, 'utf-8');
     const posts = JSON.parse(data);
     logger.info(`Loaded ${posts.length} posts from file cache`);
     return posts;
   } catch (error) {
-    logger.warn(`No cache file available: ${error.message}`);
+    // Log but don't throw - file cache is optional
+    logger.warn(`Failed to load cache file: ${error.message}`);
     return null;
   }
 }
@@ -39,19 +46,18 @@ async function loadFromFile() {
  * Save posts to cache file
  */
 async function saveToFile(posts) {
-  if (process.env.VERCEL) {
-    return;
-  }
-
   try {
     const cacheFile = process.env.CACHE_FILE || constants.CACHE_FILE_PATH;
     const dataPath = path.join(process.cwd(), cacheFile);
     const dir = path.dirname(dataPath);
+
     await fs.mkdir(dir, { recursive: true });
     await fs.writeFile(dataPath, JSON.stringify(posts, null, 2));
     logger.info(`Saved ${posts.length} posts to cache file`);
   } catch (error) {
-    logger.error(`Error saving cache file: ${error.message}`);
+    // Log error but do not crash the application
+    // This is expected on read-only file systems like Vercel
+    logger.warn(`Could not save cache file (expected on Vercel): ${error.message}`);
   }
 }
 
