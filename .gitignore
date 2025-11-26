@@ -1,0 +1,15 @@
+node_modules/
+coverage/
+*.log
+.env
+.DS_Store
+data/
+.vercel
+dist/
+build/
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+.husky/_
