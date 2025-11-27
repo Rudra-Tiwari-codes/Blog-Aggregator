@@ -359,6 +359,9 @@ async function handleSearch() {
         return;
     }
 
+    console.log('Starting search for:', query);
+    console.log('API_BASE:', API_BASE);
+
     // Show search results section
     searchResults.hidden = false;
     postsContainer.hidden = true;
@@ -367,7 +370,10 @@ async function handleSearch() {
     resultsGrid.innerHTML = '<div class="loading">searching through posts...</div>';
 
     try {
-        const response = await fetch(`${API_BASE}/api/search`, {
+        const searchUrl = `${API_BASE}/api/search`;
+        console.log('Fetching:', searchUrl);
+        
+        const response = await fetch(searchUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -378,9 +384,9 @@ async function handleSearch() {
         console.log('Search response status:', response.status);
 
         if (!response.ok) {
-            const errorData = await response.json();
+            const errorData = await response.json().catch(() => ({ message: `HTTP ${response.status}` }));
             console.error('Search error response:', errorData);
-            throw new Error(errorData.message || 'Search failed');
+            throw new Error(errorData.message || errorData.error || 'Search failed');
         }
 
         const data = await response.json();
@@ -429,6 +435,7 @@ async function handleSearch() {
 function handleClearSearch() {
     searchResults.hidden = true;
     postsContainer.hidden = false;
+    latestPost.hidden = false;  // Show the latest post section again
     searchInput.value = '';
     resultsGrid.innerHTML = '';
     resultsTitle.textContent = '';
