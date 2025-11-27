@@ -1,4 +1,14 @@
 {
+  "rewrites": [
+    {
+      "source": "/api/posts",
+      "destination": "/api/posts.js"
+    },
+    {
+      "source": "/api/search",
+      "destination": "/api/search.js"
+    }
+  ],
   "cleanUrls": true,
   "trailingSlash": false
 }
