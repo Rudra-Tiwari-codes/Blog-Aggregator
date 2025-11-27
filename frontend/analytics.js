@@ -115,7 +115,7 @@ class AnalyticsManager {
 
     getElementPosition(selector) {
         const el = document.querySelector(selector);
-        if (!el) return null;
+        if (!el) {return null;}
         const rect = el.getBoundingClientRect();
         return {
             x: rect.left + window.scrollX,
@@ -134,7 +134,7 @@ class AnalyticsManager {
 
     // Track performance metrics
     trackPerformance() {
-        if (!performance || !performance.timing) return;
+        if (!performance || !performance.timing) {return;}
 
         const timing = performance.timing;
         const metrics = {
@@ -155,7 +155,7 @@ class AnalyticsManager {
 
     // Initialize on page load
     init() {
-        if (this.initialized) return;
+        if (this.initialized) {return;}
         this.initialized = true;
 
         // Track page view

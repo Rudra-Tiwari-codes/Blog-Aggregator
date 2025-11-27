@@ -275,7 +275,7 @@ async function generateSummary(content) {
     .map(s => s.trim());
 
   if (sentences.length === 0) {
-    return cleaned.substring(0, constants.MAX_SUMMARY_LENGTH) + '...';
+    return `${cleaned.substring(0, constants.MAX_SUMMARY_LENGTH)  }...`;
   }
 
   // Take first 2-3 sentences, up to max length
@@ -285,7 +285,7 @@ async function generateSummary(content) {
     if ((summary + sentences[i]).length > constants.MAX_SUMMARY_LENGTH) {
       break;
     }
-    summary += sentences[i] + ' ';
+    summary += `${sentences[i]  } `;
   }
 
   summary = summary.trim();
@@ -295,7 +295,7 @@ async function generateSummary(content) {
     summary += '...';
   }
 
-  return summary || cleaned.substring(0, constants.MAX_SUMMARY_LENGTH) + '...';
+  return summary || `${cleaned.substring(0, constants.MAX_SUMMARY_LENGTH)  }...`;
 }
 
 /**

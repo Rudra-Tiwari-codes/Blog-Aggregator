@@ -17,7 +17,9 @@
 // ============================================
 // Global Configuration
 // ============================================
-const API_BASE = window.location.origin;
+const API_BASE = window.location.origin === 'http://localhost:3000' || window.location.origin.includes('localhost') 
+    ? window.location.origin 
+    : 'https://rudra-blog-aggregator.vercel.app';
 const MAX_SUMMARY_LENGTH = 200;
 
 // ============================================
@@ -54,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set up event listeners
     searchButton.addEventListener('click', handleSearch);
     searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleSearch();
+        if (e.key === 'Enter') {handleSearch();}
     });
     clearSearch.addEventListener('click', handleClearSearch);
 
@@ -72,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * @returns {string} - Plain text without HTML tags
  */
 function stripHtmlTags(html) {
-    if (!html) return '';
+    if (!html) {return '';}
 
     // Create a temporary div to parse HTML
     const temp = document.createElement('div');
@@ -88,7 +90,7 @@ function stripHtmlTags(html) {
  * @returns {string} - Decoded plain text
  */
 function decodeHtmlEntities(text) {
-    if (!text) return '';
+    if (!text) {return '';}
 
     const temp = document.createElement('textarea');
     temp.innerHTML = text;
@@ -107,7 +109,7 @@ function decodeHtmlEntities(text) {
  * @returns {string} - Clean, formatted summary
  */
 function cleanAndTruncateSummary(rawContent, maxLength = MAX_SUMMARY_LENGTH) {
-    if (!rawContent) return 'No summary available.';
+    if (!rawContent) {return 'No summary available.';}
 
     // Step 1: Strip HTML tags
     let cleaned = stripHtmlTags(rawContent);
@@ -128,9 +130,9 @@ function cleanAndTruncateSummary(rawContent, maxLength = MAX_SUMMARY_LENGTH) {
         const lastSpace = truncated.lastIndexOf(' ');
 
         if (lastSpace > 0) {
-            cleaned = truncated.substring(0, lastSpace) + '...';
+            cleaned = `${truncated.substring(0, lastSpace)  }...`;
         } else {
-            cleaned = truncated + '...';
+            cleaned = `${truncated  }...`;
         }
     }
 
@@ -143,7 +145,7 @@ function cleanAndTruncateSummary(rawContent, maxLength = MAX_SUMMARY_LENGTH) {
  * @returns {string} - Formatted date
  */
 function formatDate(dateString) {
-    if (!dateString) return 'Unknown date';
+    if (!dateString) {return 'Unknown date';}
 
     try {
         const date = new Date(dateString);

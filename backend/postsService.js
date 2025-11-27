@@ -119,7 +119,7 @@ async function fetchAllPosts(apiKey) {
           post.summary = await generateSummary(post.content);
         } catch (summaryErr) {
           logger.warn(`Summary generation failed for ${post.title}: ${summaryErr.message}`);
-          post.summary = (post.content || '').substring(0, constants.MAX_SUMMARY_LENGTH) + '...';
+          post.summary = `${(post.content || '').substring(0, constants.MAX_SUMMARY_LENGTH)  }...`;
         }
 
         // Generate embedding (currently disabled)
@@ -127,7 +127,7 @@ async function fetchAllPosts(apiKey) {
         post.embedding = await generateEmbedding(embeddingText, apiKey);
       } catch (err) {
         logger.error(`Error processing post ${post.title}: ${err.message}`);
-        post.summary = (post.content || '').substring(0, constants.MAX_SUMMARY_LENGTH) + '...';
+        post.summary = `${(post.content || '').substring(0, constants.MAX_SUMMARY_LENGTH)  }...`;
         post.embedding = null;
       }
 

@@ -44,5 +44,16 @@ module.exports = {
                 'no-magic-numbers': 'off',
             },
         },
+        {
+            files: ['frontend/**/*.js'],
+            env: {
+                browser: true,
+                es2021: true,
+            },
+            rules: {
+                'no-console': 'off', // Allow console in frontend for debugging
+                'no-magic-numbers': 'off', // Allow magic numbers in frontend (timeouts, sizes, etc.)
+            },
+        },
     ],
 };
