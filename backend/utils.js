@@ -8,14 +8,15 @@ const constants = require('./constants');
 
 // Initialize Gemini
 let genAI;
-let model;
 
 function initializeGemini(apiKey) {
   if (!genAI && apiKey) {
     genAI = new GoogleGenerativeAI(apiKey);
-    model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
     logger.info('Gemini AI initialized successfully');
+    return model;
   }
+  return null;
 }
 
 /**

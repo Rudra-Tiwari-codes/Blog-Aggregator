@@ -45,7 +45,7 @@ module.exports = {
             },
         },
         {
-            files: ['frontend/**/*.js'],
+            files: ['frontend/**/*.js', 'public/**/*.js'],
             env: {
                 browser: true,
                 es2021: true,
