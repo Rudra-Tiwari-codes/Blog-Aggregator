@@ -250,6 +250,13 @@ a:hover::after {
   margin-bottom: var(--gap-md);
 }
 
+/* Latest post container - no hover effect to avoid double hover */
+.latest-post-container {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
 /* ========================================
    BUTTONS - DISTINCTIVE STYLE
    ======================================== */
