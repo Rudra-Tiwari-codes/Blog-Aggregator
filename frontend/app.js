@@ -21,6 +21,15 @@ const API_BASE = window.location.origin === 'http://localhost:3000' || window.lo
     ? window.location.origin 
     : 'https://rudra-blog-aggregator.vercel.app';
 const MAX_SUMMARY_LENGTH = 200;
+const POSTS_PER_PAGE = 6;
+
+// ============================================
+// Pagination State
+// ============================================
+const paginationState = {
+    medium: { currentPage: 1, totalPages: 1 },
+    blogspot: { currentPage: 1, totalPages: 1 }
+};
 
 // ============================================
 // DOM Elements (cached for performance)
@@ -28,6 +37,7 @@ const MAX_SUMMARY_LENGTH = 200;
 let loadingScreen, errorMessage, errorText;
 let postsContainer, mediumPosts, blogspotPosts;
 let mediumCount, blogspotCount;
+let mediumPagination, blogspotPagination;
 let searchInput, searchButton, searchResults, resultsGrid, resultsTitle, clearSearch;
 let latestPost, latestPostCard;
 
@@ -44,6 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
     blogspotPosts = document.getElementById('blogspotPosts');
     mediumCount = document.getElementById('mediumCount');
     blogspotCount = document.getElementById('blogspotCount');
+    mediumPagination = document.getElementById('mediumPagination');
+    blogspotPagination = document.getElementById('blogspotPagination');
     searchInput = document.getElementById('searchInput');
     searchButton = document.getElementById('searchButton');
     searchResults = document.getElementById('searchResults');
@@ -211,8 +223,8 @@ async function fetchAndDisplayPosts() {
         }
 
         // Render posts in their respective columns
-        renderPosts(mediumPostsList, mediumPosts, mediumCount);
-        renderPosts(blogspotPostsList, blogspotPosts, blogspotCount);
+        renderPosts(mediumPostsList, mediumPosts, mediumCount, mediumPagination, 'medium');
+        renderPosts(blogspotPostsList, blogspotPosts, blogspotCount, blogspotPagination, 'blogspot');
 
         // Show loading screen for minimum 1.2 seconds for smooth UX
         setTimeout(() => {
@@ -252,14 +264,17 @@ function displayLatestPost(post) {
 }
 
 /**
- * Renders a list of posts to a target container
+ * Renders a list of posts to a target container with pagination
  * @param {Array} posts - Array of post objects
  * @param {HTMLElement} container - Target DOM element
  * @param {HTMLElement} countBadge - Badge element to show count
+ * @param {HTMLElement} paginationContainer - Pagination controls container
+ * @param {string} source - Source name ('medium' or 'blogspot')
  */
-function renderPosts(posts, container, countBadge) {
+function renderPosts(posts, container, countBadge, paginationContainer, source) {
     // Clear existing content
     container.innerHTML = '';
+    paginationContainer.innerHTML = '';
 
     // Update count badge
     countBadge.textContent = posts.length;
@@ -275,11 +290,73 @@ function renderPosts(posts, container, countBadge) {
         return;
     }
 
+    // Calculate pagination
+    const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+    const currentPage = paginationState[source].currentPage;
+    paginationState[source].totalPages = totalPages;
+
+    // Get posts for current page
+    const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+    const endIndex = startIndex + POSTS_PER_PAGE;
+    const paginatedPosts = posts.slice(startIndex, endIndex);
+
     // Create and append post cards
-    posts.forEach(post => {
+    paginatedPosts.forEach(post => {
         const card = createPostCard(post);
         container.appendChild(card);
     });
+
+    // Create pagination controls if needed
+    if (totalPages > 1) {
+        createPaginationControls(paginationContainer, currentPage, totalPages, source, posts, container, countBadge);
+    }
+}
+
+/**
+ * Creates pagination controls
+ * @param {HTMLElement} container - Pagination container
+ * @param {number} currentPage - Current page number
+ * @param {number} totalPages - Total number of pages
+ * @param {string} source - Source name
+ * @param {Array} posts - All posts for this source
+ * @param {HTMLElement} postsContainer - Posts display container
+ * @param {HTMLElement} countBadge - Count badge element
+ */
+function createPaginationControls(container, currentPage, totalPages, source, posts, postsContainer, countBadge) {
+    const pagination = document.createElement('div');
+    pagination.className = 'pagination-controls';
+
+    // Previous button
+    const prevButton = document.createElement('button');
+    prevButton.className = 'btn btn-ghost btn-sm pagination-btn';
+    prevButton.textContent = 'previous';
+    prevButton.disabled = currentPage === 1;
+    prevButton.onclick = () => {
+        paginationState[source].currentPage--;
+        renderPosts(posts, postsContainer, countBadge, container, source);
+        postsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    // Page info
+    const pageInfo = document.createElement('span');
+    pageInfo.className = 'pagination-info';
+    pageInfo.textContent = `${currentPage} / ${totalPages}`;
+
+    // Next button
+    const nextButton = document.createElement('button');
+    nextButton.className = 'btn btn-ghost btn-sm pagination-btn';
+    nextButton.textContent = 'next';
+    nextButton.disabled = currentPage === totalPages;
+    nextButton.onclick = () => {
+        paginationState[source].currentPage++;
+        renderPosts(posts, postsContainer, countBadge, container, source);
+        postsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    pagination.appendChild(prevButton);
+    pagination.appendChild(pageInfo);
+    pagination.appendChild(nextButton);
+    container.appendChild(pagination);
 }
 
 /**

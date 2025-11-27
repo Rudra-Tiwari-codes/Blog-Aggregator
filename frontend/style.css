@@ -1004,6 +1004,39 @@ a:hover::after {
 }
 
 /* ========================================
+   PAGINATION CONTROLS
+   ======================================== */
+.pagination {
+  margin-top: var(--gap-md);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-md);
+  padding: var(--gap-md) 0;
+}
+
+.pagination-info {
+  color: var(--silver);
+  font-family: var(--font-accent);
+  font-size: 0.9rem;
+  min-width: 60px;
+  text-align: center;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.pagination-btn:disabled:hover {
+  transform: none;
+  background: transparent;
+}
+
+/* ========================================
    RESPONSIVE IMPROVEMENTS FOR POSTS
    ======================================== */
 @media (max-width: 768px) {
