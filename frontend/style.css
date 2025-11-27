@@ -145,6 +145,7 @@ a:hover::after {
   justify-content: space-between;
   align-items: center;
   padding: var(--gap-sm) 0;
+  gap: var(--gap-lg);
 }
 
 .logo {
@@ -454,18 +455,18 @@ a:hover::after {
 
 .search-wrapper {
   position: relative;
-  max-width: 700px;
-  margin: 0 auto;
+  flex: 1;
+  max-width: 500px;
 }
 
 .search-input {
   width: 100%;
-  padding: 14px 180px 14px 20px;
+  padding: 10px 170px 10px 16px;
   background: var(--charcoal);
   border: 2px solid var(--steel);
   border-radius: var(--radius);
   color: var(--pearl);
-  font-size: 1rem;
+  font-size: 0.9rem;
   transition: all 0.3s ease;
   font-family: var(--font-main);
 }
