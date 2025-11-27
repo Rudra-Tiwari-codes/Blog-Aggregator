@@ -141,6 +141,21 @@ function cleanAndTruncateSummary(rawContent, maxLength = MAX_SUMMARY_LENGTH) {
  * Formats date to readable format (e.g., "Oct 26")
  * @param {string} dateString - ISO date string
  * @returns {string} - Formatted date
+ */
+function formatDate(dateString) {
+    if (!dateString) return 'Unknown date';
+
+    try {
+        const date = new Date(dateString);
+        const options = { month: 'short', day: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+    } catch (error) {
+        console.error('Date formatting error:', error);
+        return 'Invalid date';
+    }
+}
+
+// ============================================
 // API FUNCTIONS - Fetch Data
 // ============================================
 
