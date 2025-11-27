@@ -119,7 +119,7 @@ describe('Posts Service', () => {
             fs.mkdir.mockResolvedValue();
             fs.writeFile.mockResolvedValue();
 
-            const posts = await fetchAllPosts('test-api-key');
+            await fetchAllPosts('test-api-key');
 
             expect(deduplicatePosts).toHaveBeenCalled();
         });

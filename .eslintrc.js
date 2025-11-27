@@ -4,6 +4,7 @@ module.exports = {
         es2021: true,
         jest: true,
     },
+    ignorePatterns: ['public/**'],
     extends: ['eslint:recommended', 'prettier'],
     parserOptions: {
         ecmaVersion: 2021,
