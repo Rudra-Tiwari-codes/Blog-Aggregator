@@ -267,6 +267,8 @@ a:hover::after {
   text-decoration: none;
   position: relative;
   overflow: hidden;
+  min-height: 44px;  /* iOS touch target recommendation */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn::before {
@@ -506,6 +508,7 @@ a:hover::after {
   
   .logo {
     text-align: center;
+    font-size: 1.25rem;
   }
   
   .nav {
@@ -522,7 +525,7 @@ a:hover::after {
   }
   
   .search-input {
-    padding: 12px 150px 12px 16px;
+    padding: 12px 160px 12px 14px;
     font-size: 0.9rem;
   }
   
@@ -532,8 +535,8 @@ a:hover::after {
   }
   
   .btn-sm {
-    padding: 6px 12px;
-    font-size: 0.8rem;
+    padding: 8px 12px;
+    font-size: 0.75rem;
   }
   
   .main-content {
@@ -551,6 +554,10 @@ a:hover::after {
   h2 {
     font-size: 1.5rem;
   }
+  
+  .container {
+    padding: 0 var(--gap-sm);
+  }
 }
 
 /* ========================================
@@ -558,7 +565,7 @@ a:hover::after {
    ======================================== */
 .blog-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(350px, 100%), 1fr));
   gap: var(--gap-md);
   margin-top: var(--gap-lg);
 }
@@ -766,6 +773,17 @@ a:hover::after {
   transform: translateY(-4px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
   border-color: var(--gold);
+}
+
+/* Disable hover effects on touch devices */
+@media (hover: none) {
+  .post-card:hover {
+    transform: none;
+  }
+  
+  .btn:hover::before {
+    left: -100%;
+  }
 }
 
 .post-meta {
@@ -995,6 +1013,59 @@ a:hover::after {
   
   .blog-grid {
     grid-template-columns: 1fr;
+    gap: var(--gap-sm);
+  }
+  
+  .empty-state {
+    padding: var(--gap-md);
+  }
+  
+  .empty-state-icon {
+    font-size: 2.5rem;
+  }
+  
+  .search-results {
+    margin-top: var(--gap-sm);
+  }
+}
+
+/* Additional mobile-specific improvements */
+@media (max-width: 480px) {
+  .search-input {
+    padding: 10px 145px 10px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .search-actions {
+    right: 4px;
+    gap: 2px;
+  }
+  
+  .btn-sm {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+  }
+  
+  .post-title a {
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+  
+  .read-more {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+  }
+  
+  .card {
+    padding: 12px;
+  }
+  
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  h2 {
+    font-size: 1.25rem;
   }
 }
 
