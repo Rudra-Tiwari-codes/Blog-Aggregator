@@ -257,7 +257,6 @@ async function fetchAndDisplayPosts() {
  */
 function displayLatestPost(post) {
     const card = createPostCard(post);
-    card.style.border = 'none';
     latestPostCard.innerHTML = '';
     latestPostCard.appendChild(card);
     latestPost.hidden = false;

@@ -833,10 +833,6 @@ a:hover::after {
   transition: color 0.2s ease;
 }
 
-.post-title a:hover {
-  color: var(--gold);
-}
-
 .post-title a::after {
   display: none;
 }
@@ -860,7 +856,6 @@ a:hover::after {
 }
 
 .read-more:hover {
-  color: var(--gold);
   gap: 10px;
 }
 
