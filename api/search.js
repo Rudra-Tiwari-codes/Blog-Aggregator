@@ -1,21 +1,30 @@
 const { semanticSearch } = require('../backend/utils');
 const { getPosts } = require('../backend/postsService');
-const { validateSearch, checkValidation } = require('../middleware/validation');
-const { searchLimiter } = require('../middleware/security');
-const { asyncHandler } = require('../middleware/errorHandler');
 const logger = require('../utils/logger');
 const constants = require('../backend/constants');
 
 /**
- * API Handler for semantic search
+ * Vercel Serverless Function for semantic search
  */
-module.exports = [
-  searchLimiter,
-  validateSearch,
-  checkValidation,
-  asyncHandler(async (req, res) => {
+module.exports = async (req, res) => {
+  try {
+    // Only accept POST requests
+    if (req.method !== 'POST') {
+      return res.status(constants.HTTP_METHOD_NOT_ALLOWED).json({
+        success: false,
+        error: 'Method not allowed',
+      });
+    }
+
     const apiKey = process.env.GEMINI_API_KEY || 'dummy-key';
     const { query } = req.body;
+
+    if (!query || query.trim().length === 0) {
+      return res.status(constants.HTTP_BAD_REQUEST).json({
+        success: false,
+        error: 'Query parameter is required',
+      });
+    }
 
     logger.info(`Search request for: "${query}"`);
 
@@ -52,6 +61,7 @@ module.exports = [
 
     logger.info(`Search found ${cleanResults.length} results for "${query}"`);
 
+    res.setHeader('Content-Type', 'application/json');
     return res.status(constants.HTTP_OK).json({
       success: true,
       results: cleanResults,
@@ -59,5 +69,12 @@ module.exports = [
       query,
       timestamp: new Date().toISOString(),
     });
-  }),
-];
+  } catch (error) {
+    logger.error(`Error in /api/search: ${error.message}`);
+    return res.status(constants.HTTP_INTERNAL_ERROR).json({
+      success: false,
+      error: 'Search failed',
+      message: error.message,
+    });
+  }
+};

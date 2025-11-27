@@ -1,18 +1,12 @@
 const { getPosts } = require('../backend/postsService');
-const { validatePostsQuery, checkValidation } = require('../middleware/validation');
-const { apiLimiter } = require('../middleware/security');
-const { asyncHandler } = require('../middleware/errorHandler');
 const logger = require('../utils/logger');
 const constants = require('../backend/constants');
 
 /**
- * API Handler for fetching posts
+ * Vercel Serverless Function for fetching posts
  */
-module.exports = [
-  apiLimiter,
-  validatePostsQuery,
-  checkValidation,
-  asyncHandler(async (req, res) => {
+module.exports = async (req, res) => {
+  try {
     const apiKey = process.env.GEMINI_API_KEY || 'dummy-key';
     const forceRefresh = req.query.refresh === 'true';
 
@@ -30,7 +24,8 @@ module.exports = [
     }));
 
     // Set cache headers
-    res.set('Cache-Control', `public, max-age=${constants.CACHE_DURATION_MS / 1000}`);
+    res.setHeader('Cache-Control', `public, max-age=${constants.CACHE_DURATION_MS / 1000}`);
+    res.setHeader('Content-Type', 'application/json');
 
     return res.status(constants.HTTP_OK).json({
       success: true,
@@ -39,5 +34,12 @@ module.exports = [
       cached: !forceRefresh,
       timestamp: new Date().toISOString(),
     });
-  }),
-];
+  } catch (error) {
+    logger.error(`Error in /api/posts: ${error.message}`);
+    return res.status(constants.HTTP_INTERNAL_ERROR).json({
+      success: false,
+      error: 'Failed to fetch posts',
+      message: error.message,
+    });
+  }
+};
