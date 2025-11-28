@@ -537,19 +537,20 @@ a:hover::after {
   
   .search-input {
     padding: 12px 14px;
-    padding-right: 140px;
+    padding-right: 130px;
     font-size: 0.9rem;
   }
 
   .search-actions {
-    right: 4px;
-    gap: 4px;
+    right: 3px;
+    gap: 3px;
   }
 
   .btn-sm {
-    padding: 8px 12px;
+    padding: 6px 10px;
     font-size: 0.75rem;
     white-space: nowrap;
+    min-width: auto;
   }
   
   .main-content {
