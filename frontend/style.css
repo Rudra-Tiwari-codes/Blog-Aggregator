@@ -464,11 +464,14 @@ a:hover::after {
   position: relative;
   flex: 1;
   max-width: 500px;
+  width: 100%;
+  min-width: 0;
 }
 
 .search-input {
   width: 100%;
-  padding: 10px 170px 10px 16px;
+  padding: 10px 16px;
+  padding-right: 160px;
   background: var(--charcoal);
   border: 2px solid var(--steel);
   border-radius: var(--radius);
@@ -476,6 +479,7 @@ a:hover::after {
   font-size: 0.9rem;
   transition: all 0.3s ease;
   font-family: var(--font-main);
+  box-sizing: border-box;
 }
 
 .search-input:focus {
@@ -492,16 +496,19 @@ a:hover::after {
 
 .search-actions {
   position: absolute;
-  right: 8px;
+  right: 6px;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
-  gap: 8px;
+  gap: 6px;
+  align-items: center;
 }
 
 .btn-sm {
   padding: 8px 16px;
   font-size: 0.85rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* ========================================
@@ -533,18 +540,20 @@ a:hover::after {
   }
   
   .search-input {
-    padding: 12px 160px 12px 14px;
+    padding: 12px 14px;
+    padding-right: 140px;
     font-size: 0.9rem;
   }
-  
+
   .search-actions {
-    right: 6px;
+    right: 4px;
     gap: 4px;
   }
-  
+
   .btn-sm {
     padding: 8px 12px;
     font-size: 0.75rem;
+    white-space: nowrap;
   }
   
   .main-content {
@@ -1067,19 +1076,25 @@ a:hover::after {
 
 /* Additional mobile-specific improvements */
 @media (max-width: 480px) {
+  .search-wrapper {
+    max-width: 100%;
+  }
+  
   .search-input {
-    padding: 10px 145px 10px 12px;
+    padding: 10px 12px;
+    padding-right: 120px;
     font-size: 0.85rem;
   }
   
   .search-actions {
-    right: 4px;
-    gap: 2px;
+    right: 3px;
+    gap: 3px;
   }
   
   .btn-sm {
-    padding: 6px 10px;
+    padding: 6px 8px;
     font-size: 0.7rem;
+    min-width: auto;
   }
   
   .post-title a {
