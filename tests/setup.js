@@ -5,13 +5,13 @@ process.env.MEDIUM_USERNAME = 'testuser';
 
 // Globals
 global.console = {
-    ...console,
-    // Suppress console logs during tests
-    log: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
+  ...console,
+  // Suppress console logs during tests
+  log: jest.fn(),
+  debug: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
 };
 
 // Set test timeout
