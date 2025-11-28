@@ -466,12 +466,13 @@ a:hover::after {
   max-width: 500px;
   width: 100%;
   min-width: 0;
+  overflow: hidden;
 }
 
 .search-input {
   width: 100%;
   padding: 10px 16px;
-  padding-right: 160px;
+  padding-right: 150px;
   background: var(--charcoal);
   border: 2px solid var(--steel);
   border-radius: var(--radius);
@@ -496,19 +497,25 @@ a:hover::after {
 
 .search-actions {
   position: absolute;
-  right: 6px;
+  right: 4px;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
-  gap: 6px;
+  gap: 4px;
   align-items: center;
+  pointer-events: none;
+}
+
+.search-actions .btn {
+  pointer-events: auto;
 }
 
 .btn-sm {
-  padding: 8px 16px;
-  font-size: 0.85rem;
+  padding: 6px 12px;
+  font-size: 0.8rem;
   white-space: nowrap;
   flex-shrink: 0;
+  min-width: auto;
 }
 
 /* ========================================
@@ -541,19 +548,20 @@ a:hover::after {
   
   .search-input {
     padding: 12px 14px;
-    padding-right: 140px;
+    padding-right: 130px;
     font-size: 0.9rem;
   }
 
   .search-actions {
-    right: 4px;
-    gap: 4px;
+    right: 3px;
+    gap: 3px;
   }
 
   .btn-sm {
-    padding: 8px 12px;
+    padding: 6px 10px;
     font-size: 0.75rem;
     white-space: nowrap;
+    min-width: auto;
   }
   
   .main-content {
@@ -1080,15 +1088,19 @@ a:hover::after {
     max-width: 100%;
   }
   
+  .search-wrapper {
+    max-width: 100%;
+  }
+  
   .search-input {
     padding: 10px 12px;
-    padding-right: 120px;
+    padding-right: 110px;
     font-size: 0.85rem;
   }
   
   .search-actions {
-    right: 3px;
-    gap: 3px;
+    right: 2px;
+    gap: 2px;
   }
   
   .btn-sm {

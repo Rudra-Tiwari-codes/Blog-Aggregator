@@ -456,20 +456,13 @@ a:hover::after {
   max-width: 500px;
   width: 100%;
   min-width: 0;
-}
-
-.search-wrapper {
-  position: relative;
-  flex: 1;
-  max-width: 500px;
-  width: 100%;
-  min-width: 0;
+  overflow: hidden;
 }
 
 .search-input {
   width: 100%;
   padding: 10px 16px;
-  padding-right: 160px;
+  padding-right: 150px;
   background: var(--charcoal);
   border: 2px solid var(--steel);
   border-radius: var(--radius);
@@ -494,19 +487,25 @@ a:hover::after {
 
 .search-actions {
   position: absolute;
-  right: 6px;
+  right: 4px;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
-  gap: 6px;
+  gap: 4px;
   align-items: center;
+  pointer-events: none;
+}
+
+.search-actions .btn {
+  pointer-events: auto;
 }
 
 .btn-sm {
-  padding: 8px 16px;
-  font-size: 0.85rem;
+  padding: 6px 12px;
+  font-size: 0.8rem;
   white-space: nowrap;
   flex-shrink: 0;
+  min-width: auto;
 }
 
 /* ========================================
