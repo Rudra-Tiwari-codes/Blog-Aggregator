@@ -521,10 +521,10 @@ a:hover::after {
   height: 32px;
   padding: 0 14px;
   margin: 0;
-  border: 2px solid var(--teal);
+  border: none;
   border-radius: calc(var(--radius) - 2px);
   background: transparent;
-  color: var(--teal);
+  color: var(--silver);
   font-size: 0.85rem;
   font-weight: 500;
   display: inline-flex;
@@ -534,19 +534,22 @@ a:hover::after {
   white-space: nowrap;
   flex-shrink: 0;
   box-shadow: none;
+  opacity: 0.8;
 }
 
 .search-actions .btn-ghost:hover {
-  background: var(--teal);
-  color: var(--snow);
-  border-color: var(--teal);
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--gold);
+  border: none;
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(95, 138, 139, 0.25);
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
+  opacity: 1;
 }
 
 .search-actions .btn-ghost:active {
   transform: translateY(0);
-  box-shadow: 0 1px 4px rgba(95, 138, 139, 0.2);
+  background: rgba(212, 175, 55, 0.25);
+  box-shadow: 0 1px 4px rgba(212, 175, 55, 0.15);
 }
 
 .btn-sm {
