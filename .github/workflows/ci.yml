@@ -33,7 +33,7 @@ jobs:
       run: npm run format:check
     
     - name: Run tests
-      run: npm test -- --coverage
+      run: npm test -- --coverage --coverageThreshold='{}'
     
     - name: Upload coverage reports
       uses: codecov/codecov-action@v4
