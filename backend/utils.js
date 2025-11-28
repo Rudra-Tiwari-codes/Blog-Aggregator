@@ -429,27 +429,74 @@ async function semanticSearch(query, posts, apiKey, limit = constants.SEARCH_RES
 }
 
 /**
- * Fallback simple text search
+ * Fallback simple text search with improved matching
+ * Uses word boundaries and better scoring for accurate results
  */
 function simpleTextSearch(query, posts, limit = constants.SEARCH_RESULTS_LIMIT) {
   logger.info(`Text search for: "${query}" across ${posts.length} posts`);
 
-  const queryLower = query.toLowerCase();
-  const terms = queryLower.split(/\s+/).filter(t => t.length > constants.MIN_SEARCH_TERM_LENGTH);
+  const queryLower = query.toLowerCase().trim();
+  
+  // Handle empty or very short queries
+  if (!queryLower || queryLower.length === 0) {
+    return [];
+  }
+
+  // Split query into terms, allowing 2+ character terms
+  // Filter out very short terms but allow 2-character terms like "AI", "ML", "JS"
+  const terms = queryLower
+    .split(/\s+/)
+    .map(t => t.replace(/[^\w]/g, '')) // Remove punctuation
+    .filter(t => t.length >= constants.MIN_SEARCH_TERM_LENGTH && t.length > 0);
+
+  // If no valid terms after filtering, return empty results
+  if (terms.length === 0) {
+    logger.warn(`No valid search terms extracted from query: "${query}"`);
+    return [];
+  }
 
   const scored = posts.map(post => {
-    const text =
-      `${post.title} ${post.summary || ''} ${post.content?.substring(0, constants.CONTENT_SUBSTRING_LENGTH) || ''}`.toLowerCase();
+    const titleLower = (post.title || '').toLowerCase();
+    const summaryLower = (post.summary || '').toLowerCase();
+    const contentLower = (post.content?.substring(0, constants.CONTENT_SUBSTRING_LENGTH) || '').toLowerCase();
+    
+    // Combine all searchable text
+    const searchableText = `${titleLower} ${summaryLower} ${contentLower}`;
 
     let score = 0;
-    for (const term of terms) {
-      const count = (text.match(new RegExp(term, 'g')) || []).length;
-      score += count;
+    let matchedTerms = 0;
 
-      // Bonus for title matches
-      if (post.title.toLowerCase().includes(term)) {
-        score += constants.SEARCH_TITLE_BONUS;
+    for (const term of terms) {
+      // Use word boundaries for exact word matching (prevents substring matches)
+      // Escape special regex characters in the term
+      const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const wordBoundaryRegex = new RegExp(`\\b${escapedTerm}\\b`, 'gi');
+      
+      // Count matches in different sections with different weights
+      const titleMatches = (titleLower.match(wordBoundaryRegex) || []).length;
+      const summaryMatches = (summaryLower.match(wordBoundaryRegex) || []).length;
+      const contentMatches = (contentLower.match(wordBoundaryRegex) || []).length;
+      
+      // Weighted scoring: title matches are most important
+      score += titleMatches * constants.SEARCH_TITLE_BONUS;
+      score += summaryMatches * constants.SEARCH_SUMMARY_WEIGHT; // Summary matches are important
+      score += contentMatches; // Content matches are less important
+      
+      // Track if this term matched anywhere
+      if (titleMatches > 0 || summaryMatches > 0 || contentMatches > 0) {
+        matchedTerms++;
       }
+    }
+
+    // Bonus for matching all terms (exact phrase or all keywords)
+    if (matchedTerms === terms.length && terms.length > 1) {
+      score += constants.SEARCH_TITLE_BONUS;
+    }
+
+    // Exact query match bonus (if the entire query appears as-is)
+    const exactQueryRegex = new RegExp(`\\b${queryLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+    if (exactQueryRegex.test(searchableText)) {
+      score += constants.SEARCH_TITLE_BONUS * constants.SEARCH_EXACT_MATCH_BONUS_MULTIPLIER;
     }
 
     return { ...post, score };
@@ -460,7 +507,7 @@ function simpleTextSearch(query, posts, limit = constants.SEARCH_RESULTS_LIMIT) 
     .sort((a, b) => b.score - a.score)
     .slice(0, limit);
 
-  logger.info(`Found ${results.length} matching posts`);
+  logger.info(`Found ${results.length} matching posts for query: "${query}"`);
   return results;
 }
 

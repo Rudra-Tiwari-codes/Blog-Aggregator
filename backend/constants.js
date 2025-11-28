@@ -44,9 +44,11 @@ module.exports = {
   SEARCH_RESULTS_LIMIT: 10,
   SEARCH_MIN_SCORE: 0.3, // Minimum similarity score
   SEARCH_TITLE_BONUS: 5, // Bonus points for title matches
-  SEARCH_QUERY_MAX_LENGTH: 500,
-  SEARCH_QUERY_MIN_LENGTH: 1,
-  MIN_SEARCH_TERM_LENGTH: 2,
+    SEARCH_QUERY_MAX_LENGTH: 500,
+    SEARCH_QUERY_MIN_LENGTH: 1,
+    MIN_SEARCH_TERM_LENGTH: 2, // Minimum length for individual search terms (allows 2-char terms like "AI", "ML")
+    SEARCH_SUMMARY_WEIGHT: 2, // Weight multiplier for summary matches
+    SEARCH_EXACT_MATCH_BONUS_MULTIPLIER: 2, // Multiplier for exact query match bonus
 
   // Frontend Configuration
   FRONTEND_REQUEST_TIMEOUT_MS: 30000, // 30 seconds
