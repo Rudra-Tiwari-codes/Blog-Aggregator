@@ -160,7 +160,7 @@ async function fetchMediumPosts(username) {
 
 /**
  * Extract readable text from HTML - IMPROVED VERSION
- * Better handles Medium and Blogspot content
+ * Better handles Medium and Blogspot content with preserved formatting
  */
 function extractReadableText(html) {
   if (!html) {
@@ -175,26 +175,65 @@ function extractReadableText(html) {
     // Remove script, style, and other non-content elements
     $('script, style, nav, footer, header, aside, iframe, noscript, svg').remove();
 
-    // Remove code blocks that might contain markup
+    // Preserve paragraph and line break structure
+    // Convert <p> tags to double newlines (paragraph breaks)
+    $('p, div').each(function () {
+      const $el = $(this);
+      if ($el.text().trim()) {
+        $el.replaceWith(`${$el.text()}\n\n`);
+      }
+    });
+
+    // Convert <br> and <br/> to single newlines
+    $('br').replaceWith('\n');
+
+    // Convert headings to newlines with emphasis
+    $('h1, h2, h3, h4, h5, h6').each(function () {
+      const $el = $(this);
+      $el.replaceWith(`\n\n${$el.text().trim()}\n\n`);
+    });
+
+    // Convert list items to newlines with bullets
+    $('li').each(function () {
+      const $el = $(this);
+      $el.replaceWith(`• ${$el.text().trim()}\n`);
+    });
+
+    // Convert list containers
+    $('ul, ol').each(function () {
+      const $el = $(this);
+      $el.replaceWith(`\n${$el.text()}\n`);
+    });
+
+    // Preserve code blocks but simplify
     $('pre, code').each(function () {
-      $(this).replaceWith(' ');
+      const $el = $(this);
+      $el.replaceWith(`\n${$el.text()}\n`);
     });
 
     // Get main content - try multiple selectors
-    let text =
+    const rawText =
       $('article').first().text() ||
       $('.post-content').first().text() ||
       $('.entry-content').first().text() ||
       $('main').first().text() ||
       $('body').text();
 
-    // Clean up whitespace and special characters
+    let text = rawText;
+
+    // Clean up excessive whitespace while preserving intentional line breaks
+    // Replace 3+ newlines with 2 (paragraph break)
+    text = text.replace(/\n{3,}/g, '\n\n');
+
+    // Replace multiple spaces with single space (but preserve newlines)
+    text = text.replace(/[ \t]+/g, ' ');
+
+    // Clean up special characters
     text = text
-      .replace(/\s+/g, ' ')
-      .replace(/\n+/g, ' ')
-      .replace(/\t+/g, ' ')
       .replace(/&nbsp;/g, ' ')
-      .replace(/[\u200B-\u200D\uFEFF]/g, '');
+      .replace(/[\u200B-\u200D\uFEFF]/g, '')
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n');
 
     // Decode any remaining HTML entities
     text = text
@@ -203,18 +242,46 @@ function extractReadableText(html) {
       .replace(/&gt;/g, '>')
       .replace(/&quot;/g, '"')
       .replace(/&#39;/g, "'")
-      .replace(/&apos;/g, "'");
+      .replace(/&apos;/g, "'")
+      .replace(/&hellip;/g, '...')
+      .replace(/&mdash;/g, '—')
+      .replace(/&ndash;/g, '–')
+      .replace(/&ldquo;/g, '"')
+      .replace(/&rdquo;/g, '"')
+      .replace(/&lsquo;/g, "'")
+      .replace(/&rsquo;/g, "'");
 
-    // Limit to configured max length
-    return text.trim().substring(0, constants.MAX_CONTENT_LENGTH);
+    // Trim and limit to configured max length
+    text = text.trim();
+
+    // If we're truncating, try to cut at a paragraph boundary
+    if (text.length > constants.MAX_CONTENT_LENGTH) {
+      const truncated = text.substring(0, constants.MAX_CONTENT_LENGTH);
+      const lastParagraph = truncated.lastIndexOf('\n\n');
+      const MIN_PARAGRAPH_POSITION = 0.8;
+      if (lastParagraph > constants.MAX_CONTENT_LENGTH * MIN_PARAGRAPH_POSITION) {
+        return `${truncated.substring(0, lastParagraph).trim()}...`;
+      }
+      return `${truncated.trim()}...`;
+    }
+
+    return text;
   } catch (error) {
     logger.error(`Error extracting readable text: ${error.message}`);
-    // Fallback: basic HTML stripping
-    return html
+    // Fallback: basic HTML stripping with newline preservation
+    const text = html
+      .replace(/<p[^>]*>/gi, '\n\n')
+      .replace(/<\/p>/gi, '')
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<div[^>]*>/gi, '\n')
+      .replace(/<\/div>/gi, '')
       .replace(/<[^>]*>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .substring(0, constants.MAX_CONTENT_LENGTH);
+      .replace(/&nbsp;/g, ' ')
+      .replace(/[ \t]+/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+
+    return text.substring(0, constants.MAX_CONTENT_LENGTH);
   }
 }
 
@@ -436,7 +503,7 @@ function simpleTextSearch(query, posts, limit = constants.SEARCH_RESULTS_LIMIT) 
   logger.info(`Text search for: "${query}" across ${posts.length} posts`);
 
   const queryLower = query.toLowerCase().trim();
-  
+
   // Handle empty or very short queries
   if (!queryLower || queryLower.length === 0) {
     return [];
@@ -458,8 +525,10 @@ function simpleTextSearch(query, posts, limit = constants.SEARCH_RESULTS_LIMIT) 
   const scored = posts.map(post => {
     const titleLower = (post.title || '').toLowerCase();
     const summaryLower = (post.summary || '').toLowerCase();
-    const contentLower = (post.content?.substring(0, constants.CONTENT_SUBSTRING_LENGTH) || '').toLowerCase();
-    
+    const contentLower = (
+      post.content?.substring(0, constants.CONTENT_SUBSTRING_LENGTH) || ''
+    ).toLowerCase();
+
     // Combine all searchable text
     const searchableText = `${titleLower} ${summaryLower} ${contentLower}`;
 
@@ -471,17 +540,17 @@ function simpleTextSearch(query, posts, limit = constants.SEARCH_RESULTS_LIMIT) 
       // Escape special regex characters in the term
       const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const wordBoundaryRegex = new RegExp(`\\b${escapedTerm}\\b`, 'gi');
-      
+
       // Count matches in different sections with different weights
       const titleMatches = (titleLower.match(wordBoundaryRegex) || []).length;
       const summaryMatches = (summaryLower.match(wordBoundaryRegex) || []).length;
       const contentMatches = (contentLower.match(wordBoundaryRegex) || []).length;
-      
+
       // Weighted scoring: title matches are most important
       score += titleMatches * constants.SEARCH_TITLE_BONUS;
       score += summaryMatches * constants.SEARCH_SUMMARY_WEIGHT; // Summary matches are important
       score += contentMatches; // Content matches are less important
-      
+
       // Track if this term matched anywhere
       if (titleMatches > 0 || summaryMatches > 0 || contentMatches > 0) {
         matchedTerms++;
@@ -494,7 +563,10 @@ function simpleTextSearch(query, posts, limit = constants.SEARCH_RESULTS_LIMIT) 
     }
 
     // Exact query match bonus (if the entire query appears as-is)
-    const exactQueryRegex = new RegExp(`\\b${queryLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+    const exactQueryRegex = new RegExp(
+      `\\b${queryLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`,
+      'gi'
+    );
     if (exactQueryRegex.test(searchableText)) {
       score += constants.SEARCH_TITLE_BONUS * constants.SEARCH_EXACT_MATCH_BONUS_MULTIPLIER;
     }
