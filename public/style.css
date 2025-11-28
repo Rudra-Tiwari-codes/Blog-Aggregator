@@ -953,7 +953,8 @@ a:hover::after {
    SEARCH RESULTS
    ======================================== */
 .search-results {
-  margin-top: var(--gap-lg);
+  margin-top: 0;
+  margin-bottom: var(--gap-xl);
 }
 
 .search-results .blog-grid {
