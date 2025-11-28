@@ -17,12 +17,28 @@ module.exports = async (req, res) => {
     }
 
     const apiKey = process.env.GEMINI_API_KEY || 'dummy-key';
-    const { query } = req.body;
+    const rawQuery = req.body?.query;
 
-    if (!query || query.trim().length === 0) {
+    if (!rawQuery || typeof rawQuery !== 'string') {
       return res.status(constants.HTTP_BAD_REQUEST).json({
         success: false,
-        error: 'Query parameter is required',
+        error: 'Query parameter is required and must be a string',
+      });
+    }
+
+    const query = rawQuery.trim();
+
+    if (query.length === 0) {
+      return res.status(constants.HTTP_BAD_REQUEST).json({
+        success: false,
+        error: 'Query cannot be empty',
+      });
+    }
+
+    if (query.length > constants.SEARCH_QUERY_MAX_LENGTH) {
+      return res.status(constants.HTTP_BAD_REQUEST).json({
+        success: false,
+        error: `Query must be no more than ${constants.SEARCH_QUERY_MAX_LENGTH} characters`,
       });
     }
 
@@ -42,12 +58,7 @@ module.exports = async (req, res) => {
     }
 
     // Perform search
-    const results = await semanticSearch(
-      query,
-      posts,
-      apiKey,
-      constants.SEARCH_RESULTS_LIMIT
-    );
+    const results = await semanticSearch(query, posts, apiKey, constants.SEARCH_RESULTS_LIMIT);
 
     // Clean results (remove embeddings and raw content)
     const cleanResults = results.map(post => ({

@@ -24,7 +24,8 @@ module.exports = async (req, res) => {
     }));
 
     // Set cache headers
-    res.setHeader('Cache-Control', `public, max-age=${constants.CACHE_DURATION_MS / 1000}`);
+    const cacheMaxAgeSeconds = constants.CACHE_DURATION_MS / constants.MILLISECONDS_PER_SECOND;
+    res.setHeader('Cache-Control', `public, max-age=${cacheMaxAgeSeconds}`);
     res.setHeader('Content-Type', 'application/json');
 
     return res.status(constants.HTTP_OK).json({

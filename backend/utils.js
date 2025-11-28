@@ -30,7 +30,8 @@ async function retryWithBackoff(fn, retries = constants.API_RETRY_ATTEMPTS) {
       if (i === retries - 1) {
         throw error;
       }
-      const backoff = constants.API_RETRY_BACKOFF_MS * Math.pow(2, i);
+      const backoff =
+        constants.API_RETRY_BACKOFF_MS * Math.pow(constants.EXPONENTIAL_BACKOFF_BASE, i);
       logger.warn(`Retry attempt ${i + 1}/${retries} after ${backoff}ms`);
       await new Promise(resolve => setTimeout(resolve, backoff));
     }
@@ -276,7 +277,7 @@ async function generateSummary(content) {
     .map(s => s.trim());
 
   if (sentences.length === 0) {
-    return `${cleaned.substring(0, constants.MAX_SUMMARY_LENGTH)  }...`;
+    return `${cleaned.substring(0, constants.MAX_SUMMARY_LENGTH)}...`;
   }
 
   // Take first 2-3 sentences, up to max length
@@ -286,7 +287,7 @@ async function generateSummary(content) {
     if ((summary + sentences[i]).length > constants.MAX_SUMMARY_LENGTH) {
       break;
     }
-    summary += `${sentences[i]  } `;
+    summary += `${sentences[i]} `;
   }
 
   summary = summary.trim();
@@ -296,16 +297,16 @@ async function generateSummary(content) {
     summary += '...';
   }
 
-  return summary || `${cleaned.substring(0, constants.MAX_SUMMARY_LENGTH)  }...`;
+  return summary || `${cleaned.substring(0, constants.MAX_SUMMARY_LENGTH)}...`;
 }
 
 /**
  * Generate embeddings for semantic search
- * @deprecated Currently disabled due to API quota limitations  
+ * @deprecated Currently disabled due to API quota limitations
  * @param {string} _text - Text to generate embedding for (unused)
  * @param {string} _apiKey - API key for Gemini (unused)
  * @returns {null} - Always returns null, forcing fallback to keyword search
- * 
+ *
  * TODO: Re-enable when Gemini embedding API quota is available
  * This function is intentionally disabled to avoid API quota exhaustion.
  * When null is returned, the search system automatically falls back to
@@ -353,10 +354,7 @@ function normalizeUrl(url) {
     // Remove tracking parameters and fragments
     parsed.search = '';
     parsed.hash = '';
-    return parsed
-      .toString()
-      .toLowerCase()
-      .replace(/\/$/, '');
+    return parsed.toString().toLowerCase().replace(/\/$/, '');
   } catch {
     return String(url || '').toLowerCase();
   }
@@ -407,7 +405,7 @@ async function semanticSearch(query, posts, apiKey, limit = constants.SEARCH_RES
     const scored = await Promise.all(
       posts.map(async post => {
         if (!post.embedding) {
-          const text = `${post.title} ${post.summary || ''} ${post.content?.substring(0, 500) || ''}`;
+          const text = `${post.title} ${post.summary || ''} ${post.content?.substring(0, constants.CONTENT_SUBSTRING_LENGTH) || ''}`;
           post.embedding = await generateEmbedding(text, apiKey);
         }
 
@@ -437,11 +435,11 @@ function simpleTextSearch(query, posts, limit = constants.SEARCH_RESULTS_LIMIT) 
   logger.info(`Text search for: "${query}" across ${posts.length} posts`);
 
   const queryLower = query.toLowerCase();
-  const terms = queryLower.split(/\s+/).filter(t => t.length > 2);
+  const terms = queryLower.split(/\s+/).filter(t => t.length > constants.MIN_SEARCH_TERM_LENGTH);
 
   const scored = posts.map(post => {
     const text =
-      `${post.title} ${post.summary || ''} ${post.content?.substring(0, 500) || ''}`.toLowerCase();
+      `${post.title} ${post.summary || ''} ${post.content?.substring(0, constants.CONTENT_SUBSTRING_LENGTH) || ''}`.toLowerCase();
 
     let score = 0;
     for (const term of terms) {
@@ -476,4 +474,5 @@ module.exports = {
   deduplicatePosts,
   semanticSearch,
   initializeGemini,
+  normalizeUrl,
 };

@@ -52,7 +52,7 @@ async function saveToFile(posts) {
     const dir = path.dirname(dataPath);
 
     await fs.mkdir(dir, { recursive: true });
-    await fs.writeFile(dataPath, JSON.stringify(posts, null, 2));
+    await fs.writeFile(dataPath, JSON.stringify(posts, null, constants.JSON_INDENT_SPACES));
     logger.info(`Saved ${posts.length} posts to cache file`);
   } catch (error) {
     // Log error but do not crash the application
@@ -119,15 +119,15 @@ async function fetchAllPosts(apiKey) {
           post.summary = await generateSummary(post.content);
         } catch (summaryErr) {
           logger.warn(`Summary generation failed for ${post.title}: ${summaryErr.message}`);
-          post.summary = `${(post.content || '').substring(0, constants.MAX_SUMMARY_LENGTH)  }...`;
+          post.summary = `${(post.content || '').substring(0, constants.MAX_SUMMARY_LENGTH)}...`;
         }
 
         // Generate embedding (currently disabled)
-        const embeddingText = `${post.title} ${post.summary} ${post.content?.substring(0, 500) || ''}`;
+        const embeddingText = `${post.title} ${post.summary} ${post.content?.substring(0, constants.CONTENT_SUBSTRING_LENGTH) || ''}`;
         post.embedding = await generateEmbedding(embeddingText, apiKey);
       } catch (err) {
         logger.error(`Error processing post ${post.title}: ${err.message}`);
-        post.summary = `${(post.content || '').substring(0, constants.MAX_SUMMARY_LENGTH)  }...`;
+        post.summary = `${(post.content || '').substring(0, constants.MAX_SUMMARY_LENGTH)}...`;
         post.embedding = null;
       }
 
@@ -152,12 +152,7 @@ async function getPosts(apiKey, forceRefresh = false) {
   const now = Date.now();
 
   // Use in-memory cache if available and not expired
-  if (
-    !forceRefresh &&
-    postsCache &&
-    lastFetch &&
-    now - lastFetch < constants.CACHE_DURATION_MS
-  ) {
+  if (!forceRefresh && postsCache && lastFetch && now - lastFetch < constants.CACHE_DURATION_MS) {
     logger.info(`Returning ${postsCache.length} posts from in-memory cache`);
     return postsCache;
   }

@@ -6,11 +6,7 @@ const compression = require('compression');
 const expressWinston = require('express-winston');
 const logger = require('./utils/logger');
 const constants = require('./backend/constants');
-const {
-  helmetConfig,
-  generalLimiter,
-  configureCors,
-} = require('./middleware/security');
+const { helmetConfig, generalLimiter, configureCors } = require('./middleware/security');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 
 // API handlers
@@ -77,7 +73,7 @@ if (require.main === module) {
     logger.info(`
 ╔════════════════════════════════════════════╗
 ║   Blog Aggregator Server                   ║
-║   Running at http://localhost:${PORT}${PORT === 3000 ? '      ' : '     '}║
+║   Running at http://localhost:${PORT}${PORT === constants.DEFAULT_PORT ? '      ' : '     '}║
 ╠════════════════════════════════════════════╣
 ║   API Endpoints:                           ║
 ║   GET  /api/posts      - Fetch all posts   ║
