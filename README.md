@@ -68,6 +68,7 @@ npm run format        # Format code
 ## Deployment
 
 Deployed on Vercel with automatic CI/CD. Set environment variables:
+
 - `GEMINI_API_KEY` (required)
 - `MEDIUM_USERNAME` (optional)
 
