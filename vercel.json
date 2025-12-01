@@ -20,10 +20,6 @@
       "dest": "/api/search.js"
     },
     {
-      "src": "/_vercel/insights/(.*)",
-      "dest": "/_vercel/insights/$1"
-    },
-    {
       "src": "/(.*\\.(js|css|html))",
       "dest": "/frontend/$1"
     },
