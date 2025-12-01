@@ -9,7 +9,7 @@
 
 // Load Vercel Analytics script
 (function() {
-  var script = document.createElement('script');
+  const script = document.createElement('script');
   script.defer = true;
   script.src = '/_vercel/insights/script.js';
   document.head.appendChild(script);
@@ -19,7 +19,7 @@
 if (typeof window !== 'undefined') {
   // Track initial page load
   window.va('pageview');
-  
+
   // Log analytics loaded
   console.log('Vercel Web Analytics loaded');
 }
