@@ -1,14 +1,16 @@
 ﻿// Vercel Web Analytics initialization
-(function() {
+(function () {
   if (typeof window !== 'undefined') {
-    window.va = window.va || function() {
-      (window.vaq = window.vaq || []).push(arguments);
-    };
+    window.va =
+      window.va ||
+      function () {
+        (window.vaq = window.vaq || []).push(arguments);
+      };
   }
 })();
 
 // Load Vercel Analytics script
-(function() {
+(function () {
   const script = document.createElement('script');
   script.defer = true;
   script.src = '/_vercel/insights/script.js';
