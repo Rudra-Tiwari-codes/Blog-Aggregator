@@ -12,7 +12,7 @@ let genAI;
 function initializeGemini(apiKey) {
   if (!genAI && apiKey) {
     genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
     logger.info('Gemini AI initialized successfully');
     return model;
   }

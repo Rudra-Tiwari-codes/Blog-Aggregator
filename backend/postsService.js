@@ -163,10 +163,13 @@ async function getPosts(apiKey, forceRefresh = false) {
 
     if (fileCache && fileCache.length > 0) {
       postsCache = fileCache;
+
+      // Check if file cache is stale BEFORE updating lastFetch
+      const previousFetch = lastFetch;
       lastFetch = now;
 
-      // Background refresh if cache is stale
-      if (now - lastFetch > constants.CACHE_DURATION_MS) {
+      // Background refresh if cache is stale (no previous fetch or expired)
+      if (!previousFetch || now - previousFetch > constants.CACHE_DURATION_MS) {
         logger.info('Cache is stale, triggering background refresh...');
         fetchAllPosts(apiKey)
           .then(p => {
