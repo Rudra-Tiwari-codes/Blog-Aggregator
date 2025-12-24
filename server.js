@@ -1,4 +1,5 @@
 require('dotenv').config();
+const Sentry = require('@sentry/node');
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
@@ -8,6 +9,20 @@ const logger = require('./utils/logger');
 const constants = require('./backend/constants');
 const { helmetConfig, generalLimiter, configureCors } = require('./middleware/security');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
+
+// Initialize Sentry for error monitoring (production only)
+if (process.env.SENTRY_DSN && process.env.NODE_ENV === constants.PROD_ENV) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.NODE_ENV || constants.DEV_ENV,
+    tracesSampleRate: 0.1, // Capture 10% of transactions for performance monitoring
+    integrations: [
+      // Enable HTTP calls tracing
+      new Sentry.Integrations.Http({ tracing: true }),
+    ],
+  });
+  logger.info('Sentry error monitoring initialized');
+}
 
 // API handlers
 const postsHandler = require('./api/posts');

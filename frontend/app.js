@@ -41,6 +41,7 @@ let mediumCount, blogspotCount;
 let mediumPagination, blogspotPagination;
 let searchInput, searchButton, searchResults, resultsGrid, resultsTitle, clearSearch;
 let latestPost, latestPostCard;
+let themeToggle;
 
 // ============================================
 // Initialize App on DOM Load
@@ -65,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
   clearSearch = document.getElementById('clearSearch');
   latestPost = document.getElementById('latestPost');
   latestPostCard = document.getElementById('latestPostCard');
+  themeToggle = document.getElementById('themeToggle');
 
   // Set up event listeners
   searchButton.addEventListener('click', handleSearch);
@@ -74,6 +76,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   clearSearch.addEventListener('click', handleClearSearch);
+
+  // Initialize theme toggle
+  initializeTheme();
+  if (themeToggle) {
+    themeToggle.addEventListener('click', toggleTheme);
+  }
 
   // Load posts on startup
   fetchAndDisplayPosts();
@@ -590,6 +598,48 @@ function showError(message) {
 function hideError() {
   errorMessage.hidden = true;
   errorText.textContent = '';
+}
+
+// ============================================
+// THEME TOGGLE FUNCTIONALITY
+// ============================================
+
+const THEME_STORAGE_KEY = 'rudra-blog-theme';
+
+/**
+ * Initializes theme from localStorage or system preference
+ */
+function initializeTheme() {
+  const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+
+  if (savedTheme) {
+    // Use saved preference
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  } else {
+    // Check system preference
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+  }
+
+  // Listen for system theme changes (only if no saved preference)
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    if (!localStorage.getItem(THEME_STORAGE_KEY)) {
+      document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+    }
+  });
+}
+
+/**
+ * Toggles between light and dark theme
+ */
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem(THEME_STORAGE_KEY, newTheme);
+
+  console.log(`Theme switched to: ${newTheme}`);
 }
 
 // ============================================

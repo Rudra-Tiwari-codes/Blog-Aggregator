@@ -21,7 +21,13 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <div class="logo" onclick="location.reload()">rudra's corner</div>
+                <div class="header-left">
+                    <div class="logo" onclick="location.reload()">rudra's corner</div>
+                    <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark/light mode" title="Toggle theme">
+                        <span class="theme-icon-dark">🌙</span>
+                        <span class="theme-icon-light">☀️</span>
+                    </button>
+                </div>
                 
                 <div class="search-wrapper">
                     <input type="search" id="searchInput" class="search-input"
