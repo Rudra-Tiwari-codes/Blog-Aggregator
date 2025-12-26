@@ -28,11 +28,11 @@ A production-grade blog aggregation platform that collects, categorizes, and pre
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| Frontend | React/Next.js |
-| Backend | Serverless Functions |
-| Deployment | Vercel |
+| Component  | Technology           |
+| ---------- | -------------------- |
+| Frontend   | React/Next.js        |
+| Backend    | Serverless Functions |
+| Deployment | Vercel               |
 
 ## Future Improvements
 
