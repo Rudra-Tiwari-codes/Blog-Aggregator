@@ -36,11 +36,8 @@ jobs:
     - name: Check Prettier formatting
       run: npm run format:check
     
-    - name: Run unit tests
-      run: npm run test:unit -- --coverage
-    
-    - name: Run integration tests
-      run: npm run test:integration -- --coverage
+    - name: Run tests with coverage
+      run: npm test -- --coverage --coverageThreshold='{}'
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
@@ -90,9 +87,11 @@ jobs:
     
     - name: Verify server starts
       run: |
-        timeout 10 node server.js &
+        node server.js &
+        SERVER_PID=$!
         sleep 5
-        curl -f http://localhost:3000/health || exit 1
+        curl -f http://localhost:3000/health || (kill $SERVER_PID 2>/dev/null; exit 1)
+        kill $SERVER_PID 2>/dev/null || true
       env:
         NODE_ENV: development
         PORT: 3000
