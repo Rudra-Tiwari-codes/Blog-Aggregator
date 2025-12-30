@@ -10,7 +10,7 @@ Developers and researchers often follow content across multiple platforms (Mediu
 
 ## Solution
 
-A production-grade blog aggregation platform that collects, categorizes, and presents articles from multiple sources in a unified, modern interface.
+A blog aggregation platform that collects, categorizes, and presents articles from multiple sources in a modern interface.
 
 ## Methodology
 
