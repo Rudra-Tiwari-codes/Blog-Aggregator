@@ -169,6 +169,20 @@ function cleanAndTruncateSummary(rawContent, maxLength = MAX_SUMMARY_LENGTH) {
 }
 
 /**
+ * Escapes HTML special characters to prevent XSS attacks
+ * @param {string} text - Text to escape
+ * @returns {string} - Escaped text safe for HTML insertion
+ */
+function escapeHtml(text) {
+  if (!text) {
+    return '';
+  }
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+/**
  * Formats date to readable format (e.g., "Oct 26")
  * @param {string} dateString - ISO date string
  * @returns {string} - Formatted date
@@ -510,7 +524,7 @@ async function handleSearch() {
                 <div class="empty-state">
                     <div class="empty-state-icon">🔍</div>
                     <h3>no matches found</h3>
-                    <p>couldn't find anything for "${query}"</p>
+                    <p>couldn't find anything for "${escapeHtml(query)}"</p>
                     <p style="font-size: 0.9rem; margin-top: 1rem;">try different keywords or browse all posts</p>
                 </div>
             `;
@@ -527,7 +541,7 @@ async function handleSearch() {
             <div class="empty-state">
                 <div class="empty-state-icon">⚠️</div>
                 <h3>search hit a snag</h3>
-                <p>${error.message || 'search is taking a nap right now'}</p>
+                <p>${escapeHtml(error.message) || 'search is taking a nap right now'}</p>
                 <button onclick="document.getElementById('clearSearch').click()" class="btn btn-secondary" style="margin-top: 1rem;">
                     back to posts
                 </button>
