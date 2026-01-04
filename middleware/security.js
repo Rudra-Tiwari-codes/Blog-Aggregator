@@ -61,6 +61,7 @@ const searchLimiter = rateLimit({
  */
 const configureCors = () => {
   const allowedOrigins = [
+    'https://rudra-blog-aggregator.vercel.app',
     'https://blog-aggregator-finale.vercel.app',
     process.env.FRONTEND_URL,
     process.env.NODE_ENV === constants.DEV_ENV && 'http://localhost:3000',
