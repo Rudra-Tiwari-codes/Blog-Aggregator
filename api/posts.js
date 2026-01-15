@@ -7,7 +7,10 @@ const constants = require('../backend/constants');
  */
 module.exports = async (req, res) => {
   try {
-    const apiKey = process.env.GEMINI_API_KEY || 'dummy-key';
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      logger.warn('GEMINI_API_KEY not set - semantic search disabled, using keyword fallback');
+    }
     const forceRefresh = req.query.refresh === 'true';
 
     logger.info(`Fetching posts${forceRefresh ? ' (force refresh)' : ' (cached)'}`);

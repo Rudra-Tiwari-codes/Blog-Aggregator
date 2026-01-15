@@ -3,14 +3,18 @@
 
 const FRONTEND_CONFIG = {
   // API Configuration
+  PRODUCTION_URL: 'https://rudra-blog-aggregator.vercel.app',
   API_BASE: window.location.origin,
 
   // Display Lengths
   MAX_SUMMARY_LENGTH: 200,
 
+  // Pagination
+  POSTS_PER_PAGE: 6,
+
   // Timeouts
   REQUEST_TIMEOUT_MS: 30000, // 30 seconds
-  LOADING_MIN_DURATION_MS: 1200, //'1.2 seconds for UX
+  LOADING_MIN_DURATION_MS: 1200, // 1.2 seconds for UX
 
   // UI Messages
   MESSAGES: {
@@ -28,3 +32,4 @@ const FRONTEND_CONFIG = {
 
 // Make it globally available
 window.FRONTEND_CONFIG = FRONTEND_CONFIG;
+

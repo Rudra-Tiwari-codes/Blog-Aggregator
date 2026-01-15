@@ -16,7 +16,10 @@ module.exports = async (req, res) => {
       });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY || 'dummy-key';
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      logger.warn('GEMINI_API_KEY not set - using keyword search fallback');
+    }
     const rawQuery = req.body?.query;
 
     if (!rawQuery || typeof rawQuery !== 'string') {
