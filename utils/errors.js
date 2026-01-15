@@ -25,46 +25,6 @@ class ValidationError extends AppError {
 }
 
 /**
- * Authentication error class
- */
-class AuthenticationError extends AppError {
-  constructor(message = 'Authentication required') {
-    super(message, constants.HTTP_UNAUTHORIZED);
-    this.name = 'AuthenticationError';
-  }
-}
-
-/**
- * Authorization error class
- */
-class AuthorizationError extends AppError {
-  constructor(message = 'Access forbidden') {
-    super(message, constants.HTTP_FORBIDDEN);
-    this.name = 'AuthorizationError';
-  }
-}
-
-/**
- * Not found error class
- */
-class NotFoundError extends AppError {
-  constructor(message = 'Resource not found') {
-    super(message, constants.HTTP_NOT_FOUND);
-    this.name = 'NotFoundError';
-  }
-}
-
-/**
- * Rate limit error class
- */
-class RateLimitError extends AppError {
-  constructor(message = 'Too many requests') {
-    super(message, constants.HTTP_TOO_MANY_REQUESTS);
-    this.name = 'RateLimitError';
-  }
-}
-
-/**
  * External API error class
  */
 class ExternalAPIError extends AppError {
@@ -79,9 +39,6 @@ class ExternalAPIError extends AppError {
 module.exports = {
   AppError,
   ValidationError,
-  AuthenticationError,
-  AuthorizationError,
-  NotFoundError,
-  RateLimitError,
   ExternalAPIError,
 };
+
