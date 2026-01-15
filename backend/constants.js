@@ -67,7 +67,6 @@ module.exports = {
 
   // Server Configuration
   DEFAULT_PORT,
-  PORT_DEFAULT: DEFAULT_PORT,
 
   // Environment
   PROD_ENV: 'production',
