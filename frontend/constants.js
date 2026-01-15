@@ -32,4 +32,3 @@ const FRONTEND_CONFIG = {
 
 // Make it globally available
 window.FRONTEND_CONFIG = FRONTEND_CONFIG;
-

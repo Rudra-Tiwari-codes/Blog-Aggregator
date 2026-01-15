@@ -1,8 +1,4 @@
-const {
-  helmetConfig,
-  generalLimiter,
-  configureCors,
-} = require('../../middleware/security');
+const { helmetConfig, generalLimiter, configureCors } = require('../../middleware/security');
 const constants = require('../../backend/constants');
 
 describe('Security Middleware', () => {
@@ -87,4 +83,3 @@ describe('Security Middleware', () => {
     });
   });
 });
-

@@ -240,9 +240,7 @@ async function fetchAndDisplayPosts() {
 
     // Separate posts by source
     const mediumPostsList = posts.filter(post => (post.source || '') === 'Medium');
-    const blogspotPostsList = posts.filter(
-      post => (post.source || '') === 'Blogspot'
-    );
+    const blogspotPostsList = posts.filter(post => (post.source || '') === 'Blogspot');
 
     // Find and display the latest post from both sources
     const allPosts = [...mediumPostsList, ...blogspotPostsList];
