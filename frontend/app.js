@@ -17,12 +17,15 @@
 // ============================================
 // Global Configuration
 // ============================================
-const API_BASE =
-  window.location.origin === 'http://localhost:3000' || window.location.origin.includes('localhost')
-    ? window.location.origin
-    : 'https://rudra-blog-aggregator.vercel.app';
-const MAX_SUMMARY_LENGTH = 200;
-const POSTS_PER_PAGE = 6;
+const getApiBase = () => {
+  if (window.location.origin.includes('localhost')) {
+    return window.location.origin;
+  }
+  return window.FRONTEND_CONFIG?.PRODUCTION_URL || window.location.origin;
+};
+const API_BASE = getApiBase();
+const MAX_SUMMARY_LENGTH = window.FRONTEND_CONFIG?.MAX_SUMMARY_LENGTH || 200;
+const POSTS_PER_PAGE = window.FRONTEND_CONFIG?.POSTS_PER_PAGE || 6;
 
 // ============================================
 // Pagination State
@@ -236,9 +239,9 @@ async function fetchAndDisplayPosts() {
     }
 
     // Separate posts by source
-    const mediumPostsList = posts.filter(post => (post.source || '').toLowerCase() === 'medium');
+    const mediumPostsList = posts.filter(post => (post.source || '') === 'Medium');
     const blogspotPostsList = posts.filter(
-      post => (post.source || '').toLowerCase() === 'blogspot'
+      post => (post.source || '') === 'Blogspot'
     );
 
     // Find and display the latest post from both sources
