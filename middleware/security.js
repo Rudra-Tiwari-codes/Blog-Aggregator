@@ -35,34 +35,11 @@ const generalLimiter = rateLimit({
 });
 
 /**
- * API endpoint rate limiter
- */
-const apiLimiter = rateLimit({
-  windowMs: constants.RATE_LIMIT_WINDOW_MS,
-  max: constants.RATE_LIMIT_API_MAX_REQUESTS,
-  message: 'Too many API requests, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-/**
- * Search endpoint rate limiter (stricter)
- */
-const searchLimiter = rateLimit({
-  windowMs: constants.RATE_LIMIT_SEARCH_WINDOW_MS,
-  max: constants.RATE_LIMIT_SEARCH_MAX_REQUESTS,
-  message: 'Too many search requests, please slow down.',
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-/**
  * Configure CORS with whitelist
  */
 const configureCors = () => {
   const allowedOrigins = [
     'https://rudra-blog-aggregator.vercel.app',
-    'https://blog-aggregator-finale.vercel.app',
     process.env.FRONTEND_URL,
     process.env.NODE_ENV === constants.DEV_ENV && 'http://localhost:3000',
     process.env.NODE_ENV === constants.DEV_ENV && 'http://127.0.0.1:3000',
@@ -90,7 +67,5 @@ const configureCors = () => {
 module.exports = {
   helmetConfig,
   generalLimiter,
-  apiLimiter,
-  searchLimiter,
   configureCors,
 };

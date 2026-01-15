@@ -1,8 +1,6 @@
 const {
   helmetConfig,
   generalLimiter,
-  apiLimiter,
-  searchLimiter,
   configureCors,
 } = require('../../middleware/security');
 const constants = require('../../backend/constants');
@@ -12,16 +10,6 @@ describe('Security Middleware', () => {
     it('should have general limiter configured', () => {
       expect(generalLimiter).toBeDefined();
       expect(typeof generalLimiter).toBe('function');
-    });
-
-    it('should have API limiter configured', () => {
-      expect(apiLimiter).toBeDefined();
-      expect(typeof apiLimiter).toBe('function');
-    });
-
-    it('should have search limiter configured', () => {
-      expect(searchLimiter).toBeDefined();
-      expect(typeof searchLimiter).toBe('function');
     });
   });
 
@@ -58,7 +46,7 @@ describe('Security Middleware', () => {
       const corsConfig = configureCors();
 
       const callback = jest.fn();
-      corsConfig.origin('https://blog-aggregator-finale.vercel.app', callback);
+      corsConfig.origin('https://rudra-blog-aggregator.vercel.app', callback);
 
       expect(callback).toHaveBeenCalledWith(null, true);
     });
@@ -99,3 +87,4 @@ describe('Security Middleware', () => {
     });
   });
 });
+
