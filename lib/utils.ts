@@ -157,7 +157,7 @@ export function extractReadableText(html: string): string {
     }
 
     try {
-        const $ = cheerio.load(html, { decodeEntities: true });
+        const $ = cheerio.load(html);
 
         // Remove script, style, and other non-content elements
         $('script, style, nav, footer, header, aside, iframe, noscript, svg').remove();
