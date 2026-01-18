@@ -85,10 +85,12 @@ app.use(errorHandler);
 // Start server (for local development)
 if (require.main === module) {
   app.listen(PORT, () => {
+    const portStr = `Running at http://localhost:${PORT}`;
+    const envStr = `- Environment: ${process.env.NODE_ENV || 'development'}`;
     logger.info(`
 ╔════════════════════════════════════════════╗
 ║   Blog Aggregator Server                   ║
-║   Running at http://localhost:${PORT}${PORT === constants.DEFAULT_PORT ? '      ' : '     '}║
+║   ${portStr.padEnd(39)}║
 ╠════════════════════════════════════════════╣
 ║   API Endpoints:                           ║
 ║   GET  /api/posts      - Fetch all posts   ║
@@ -97,7 +99,7 @@ if (require.main === module) {
 ╠════════════════════════════════════════════╣
 ║   Configuration:                           ║
 ║   - Add ?refresh=true to force refresh     ║
-║   - Environment: ${process.env.NODE_ENV || 'development'}${process.env.NODE_ENV === 'production' ? '          ' : '            '}║
+║   ${envStr.padEnd(39)}║
 ╚════════════════════════════════════════════╝
     `);
   });
