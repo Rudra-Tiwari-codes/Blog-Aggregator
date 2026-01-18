@@ -1,20 +1,18 @@
 {
   "name": "blog-aggregator",
-  "version": "3.0.0",
-  "description": "Production-grade blog aggregation platform for Medium and Blogspot with intelligent caching and semantic search",
-  "main": "server.js",
+  "version": "4.0.0",
+  "description": "Production-grade blog aggregation platform for Medium and Blogspot with intelligent caching and semantic search - Next.js Edition",
+  "private": true,
   "scripts": {
-    "start": "node server.js",
-    "dev": "NODE_ENV=development node server.js",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "test:unit": "jest tests/unit",
-    "test:integration": "jest tests/integration",
-    "lint": "eslint . --ext .js",
-    "lint:fix": "eslint . --ext .js --fix",
-    "format": "prettier --write \"**/*.{js,json,md}\"",
-    "format:check": "prettier --check \"**/*.{js,json,md}\"",
-    "prepare": "node -e \"try { require('husky').install() } catch (e) {}\""
+    "format": "prettier --write \"**/*.{js,ts,tsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{js,ts,tsx,json,md}\""
   },
   "keywords": [
     "blog",
@@ -23,50 +21,33 @@
     "medium",
     "blogspot",
     "semantic-search",
-    "nodejs",
-    "production",
-    "serverless"
+    "nextjs",
+    "react",
+    "typescript"
   ],
   "author": "Rudra Tiwari",
   "license": "MIT",
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
-    "@sentry/node": "^7.0.0",
-    "@vercel/analytics": "^1.5.0",
     "cheerio": "^1.0.0-rc.12",
-    "compression": "^1.7.4",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "express-rate-limit": "^7.1.5",
-    "express-validator": "^7.0.1",
-    "express-winston": "^4.2.0",
-    "helmet": "^7.1.0",
+    "next": "^14.2.0",
     "node-fetch": "^2.7.0",
-    "winston": "^3.11.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/xml2js": "^0.4.14",
     "eslint": "^8.56.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-jest": "^27.6.1",
-    "husky": "^8.0.3",
+    "eslint-config-next": "^14.2.0",
     "jest": "^29.7.0",
-    "lint-staged": "^15.2.0",
     "prettier": "^3.1.1",
-    "supertest": "^6.3.3"
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md}": [
-      "prettier --write"
-    ]
+    "typescript": "^5.3.0"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
+    "node": ">=18.0.0"
   }
 }
