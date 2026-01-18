@@ -1,5 +1,7 @@
 // Frontend constants and configuration
 // Centralized configuration for the blog aggregator frontend
+// NOTE: Some values are intentionally duplicated from backend/constants.js
+// because this file runs in the browser and cannot import Node.js modules
 
 const FRONTEND_CONFIG = {
   // API Configuration
