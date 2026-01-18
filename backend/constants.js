@@ -76,8 +76,7 @@ module.exports = {
   // HTTP Status Codes
   HTTP_OK: 200,
   HTTP_BAD_REQUEST: 400,
-  HTTP_UNAUTHORIZED: 401,
-  HTTP_FORBIDDEN: 403,
+
   HTTP_NOT_FOUND: 404,
   HTTP_METHOD_NOT_ALLOWED: 405,
   HTTP_TOO_MANY_REQUESTS: 429,
@@ -89,7 +88,8 @@ module.exports = {
   BLOG_SOURCE_BLOGSPOT: 'Blogspot',
 
   // Blogger Configuration
-  BLOGGER_RSS_URL: 'https://rudra-tiwari-blogs.blogspot.com/feeds/posts/default',
+  BLOGGER_RSS_URL:
+    process.env.BLOGGER_RSS_URL || 'https://rudra-tiwari-blogs.blogspot.com/feeds/posts/default',
 
   // User Agent
   USER_AGENT: 'Mozilla/5.0 (compatible; BlogAggregator/3.0)',
