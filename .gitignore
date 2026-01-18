@@ -13,4 +13,5 @@ build/
 *~
 .vscode/
 .idea/
-.husky/_
+.husky/_/
+test_output.txt
