@@ -36,7 +36,6 @@ const format = winston.format.combine(
 );
 
 // Define transports
-// Define transports
 const transports = [new winston.transports.Console()];
 
 // Only add file transports if NOT in Vercel environment and NOT in test environment
