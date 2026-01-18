@@ -3,6 +3,10 @@ coverage/
 logs/
 *.log
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 .DS_Store
 data/
 .vercel
@@ -15,3 +19,8 @@ build/
 .idea/
 .husky/_/
 test_output.txt
+
+# Next.js
+.next/
+out/
+next-env.d.ts

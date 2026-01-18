@@ -1,38 +1,4 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "frontend/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/posts",
-      "dest": "/api/posts.js"
-    },
-    {
-      "src": "/api/search",
-      "dest": "/api/search.js"
-    },
-    {
-      "src": "/(.*\\.(js|css|html))",
-      "dest": "/frontend/$1"
-    },
-    {
-      "src": "/",
-      "dest": "/frontend/index.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/index.html"
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs"
 }
