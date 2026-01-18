@@ -30,9 +30,9 @@ A blog aggregation platform that collects, categorizes, and presents articles fr
 
 | Component  | Technology           |
 | ---------- | -------------------- |
-| Frontend   | React/Next.js        |
-| Backend    | Serverless Functions |
-| Deployment | Vercel               |
+| Frontend   | Vanilla JavaScript   |
+| Backend    | Node.js/Express      |
+| Deployment | Vercel Serverless    |
 
 ## Future Improvements
 
