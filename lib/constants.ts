@@ -7,7 +7,8 @@ export const SECONDS_PER_MINUTE = 60;
 
 // Cache Configuration
 export const CACHE_DURATION_MINUTES = 30;
-export const CACHE_DURATION_MS = CACHE_DURATION_MINUTES * SECONDS_PER_MINUTE * MILLISECONDS_PER_SECOND;
+export const CACHE_DURATION_MS =
+  CACHE_DURATION_MINUTES * SECONDS_PER_MINUTE * MILLISECONDS_PER_SECOND;
 export const CACHE_FILE_PATH = 'data/posts.json';
 
 // API Configuration
@@ -63,7 +64,7 @@ export const BLOG_SOURCE_BLOGSPOT = 'Blogspot';
 
 // Blogger Configuration
 export const BLOGGER_RSS_URL =
-    process.env.BLOGGER_RSS_URL || 'https://rudra-tiwari-blogs.blogspot.com/feeds/posts/default';
+  process.env.BLOGGER_RSS_URL || 'https://rudra-tiwari-blogs.blogspot.com/feeds/posts/default';
 
 // User Agent
 export const USER_AGENT = 'Mozilla/5.0 (compatible; BlogAggregator/4.0)';

@@ -1,0 +1,21 @@
+# Dependency directories
+node_modules/
+
+# Build output
+.next/
+out/
+build/
+dist/
+
+# Coverage
+coverage/
+
+# Package manager files
+package-lock.json
+
+# Legacy directories (to be removed after migration)
+frontend/
+backend/
+api/
+middleware/
+public/
