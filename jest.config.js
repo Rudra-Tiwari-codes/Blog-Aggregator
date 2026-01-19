@@ -2,11 +2,7 @@ module.exports = {
   testEnvironment: 'node',
   coverageDirectory: 'coverage',
   collectCoverageFrom: [
-    // Legacy directories (tests still reference these)
-    'backend/**/*.js',
-    'api/**/*.js',
-    'middleware/**/*.js',
-    'utils/**/*.js',
+    'lib/**/*.ts',
     '!**/node_modules/**',
     '!**/tests/**',
     '!**/coverage/**',
@@ -14,18 +10,38 @@ module.exports = {
   ],
   coverageThreshold: {
     global: {
-      branches: 0,
-      functions: 0,
-      lines: 0,
-      statements: 0,
+      branches: 15,
+      functions: 30,
+      lines: 50,
+      statements: 50,
     },
   },
-  testMatch: ['**/tests/**/*.test.js'],
+  testMatch: ['**/tests/unit/**/*.test.js'],
   setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
   testTimeout: 10000,
   verbose: true,
   collectCoverage: true,
   coverageReporters: ['text', 'lcov', 'html'],
+  // Module resolution for TypeScript files
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   // Ignore Next.js build output and node_modules
   testPathIgnorePatterns: ['/node_modules/', '/.next/'],
+  // Transform TypeScript files
+  transform: {
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        useESM: false,
+        tsconfig: {
+          module: 'commonjs',
+          esModuleInterop: true,
+          allowSyntheticDefaultImports: true,
+        },
+      },
+    ],
+  },
+  // Module name mapper for path aliases
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/$1',
+  },
 };
