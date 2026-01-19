@@ -6,7 +6,12 @@
 // Import from the new lib/ TypeScript modules
 // Jest will use the compiled JS via ts-jest or the source directly
 const constants = require('../../lib/constants');
-const { normalizeUrl, deduplicatePosts, extractReadableText, generateSummary } = require('../../lib/utils');
+const {
+  normalizeUrl,
+  deduplicatePosts,
+  extractReadableText,
+  generateSummary,
+} = require('../../lib/utils');
 
 describe('Utility Functions', () => {
   describe('Constants', () => {

@@ -32,10 +32,20 @@ describe('Posts Service', () => {
   describe('getPosts', () => {
     test('should fetch posts from both sources', async () => {
       const bloggerPosts = [
-        { title: 'Blogspot Post', source: 'Blogspot', link: 'https://blog.com/1', published: '2024-01-01' },
+        {
+          title: 'Blogspot Post',
+          source: 'Blogspot',
+          link: 'https://blog.com/1',
+          published: '2024-01-01',
+        },
       ];
       const mediumPosts = [
-        { title: 'Medium Post', source: 'Medium', link: 'https://medium.com/1', published: '2024-01-02' },
+        {
+          title: 'Medium Post',
+          source: 'Medium',
+          link: 'https://medium.com/1',
+          published: '2024-01-02',
+        },
       ];
 
       fetchBloggerPosts.mockResolvedValue(bloggerPosts);
@@ -51,7 +61,12 @@ describe('Posts Service', () => {
 
     test('should continue if one source fails', async () => {
       const mediumPosts = [
-        { title: 'Medium Post', source: 'Medium', link: 'https://medium.com/1', published: '2024-01-01' },
+        {
+          title: 'Medium Post',
+          source: 'Medium',
+          link: 'https://medium.com/1',
+          published: '2024-01-01',
+        },
       ];
 
       fetchBloggerPosts.mockRejectedValue(new Error('Blogger failed'));
@@ -66,7 +81,12 @@ describe('Posts Service', () => {
 
     test('should use cache when available', async () => {
       const mockPosts = [
-        { title: 'Cached Post', source: 'Medium', link: 'https://medium.com/1', published: '2024-01-01' },
+        {
+          title: 'Cached Post',
+          source: 'Medium',
+          link: 'https://medium.com/1',
+          published: '2024-01-01',
+        },
       ];
 
       fetchBloggerPosts.mockResolvedValue([]);
@@ -87,8 +107,18 @@ describe('Posts Service', () => {
 
     test('should sort posts by date (newest first)', async () => {
       const posts = [
-        { title: 'Old Post', source: 'Blogspot', link: 'https://blog.com/1', published: '2023-01-01' },
-        { title: 'New Post', source: 'Medium', link: 'https://medium.com/1', published: '2024-06-01' },
+        {
+          title: 'Old Post',
+          source: 'Blogspot',
+          link: 'https://blog.com/1',
+          published: '2023-01-01',
+        },
+        {
+          title: 'New Post',
+          source: 'Medium',
+          link: 'https://medium.com/1',
+          published: '2024-06-01',
+        },
       ];
 
       fetchBloggerPosts.mockResolvedValue([posts[0]]);
