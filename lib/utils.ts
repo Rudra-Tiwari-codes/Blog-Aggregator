@@ -6,6 +6,16 @@ import * as constants from './constants';
 import type { Post, SearchResult } from './types';
 
 /**
+ * Create an AbortSignal that times out after the specified duration
+ * Compatible with all Node.js 18+ versions (AbortSignal.timeout requires 18.14.1+)
+ */
+function createTimeoutSignal(timeoutMs: number): AbortSignal {
+  const controller = new AbortController();
+  setTimeout(() => controller.abort(), timeoutMs);
+  return controller.signal;
+}
+
+/**
  * Retry logic with exponential backoff
  */
 async function retryWithBackoff<T>(
@@ -40,7 +50,7 @@ export async function fetchBloggerPosts(): Promise<Post[]> {
         headers: {
           'User-Agent': constants.USER_AGENT,
         },
-        signal: AbortSignal.timeout(constants.API_REQUEST_TIMEOUT_MS),
+        signal: createTimeoutSignal(constants.API_REQUEST_TIMEOUT_MS),
       });
 
       if (!res.ok) {
@@ -67,7 +77,7 @@ export async function fetchBloggerPosts(): Promise<Post[]> {
       const title = entry.title?._ || entry.title || 'Untitled';
       const link = Array.isArray(entry.link)
         ? entry.link.find((l: { $: { rel: string; href: string } }) => l.$.rel === 'alternate')?.$
-            .href
+          .href
         : entry.link?.$.href || '';
       const published = entry.published || new Date().toISOString();
       const content = entry.content?._ || entry.content || '';
@@ -102,7 +112,7 @@ export async function fetchMediumPosts(username: string): Promise<Post[]> {
         headers: {
           'User-Agent': constants.USER_AGENT,
         },
-        signal: AbortSignal.timeout(constants.API_REQUEST_TIMEOUT_MS),
+        signal: createTimeoutSignal(constants.API_REQUEST_TIMEOUT_MS),
       });
 
       if (!res.ok) {
