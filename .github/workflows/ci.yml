@@ -74,8 +74,8 @@ jobs:
       run: npm ci
     
     - name: Run npm audit
-      run: npm audit --audit-level=high
-      continue-on-error: true
+      run: |
+        npm audit --audit-level=high || echo "::warning::Security vulnerabilities detected. Please review npm audit output above."
 
   build-verification:
     runs-on: ubuntu-latest

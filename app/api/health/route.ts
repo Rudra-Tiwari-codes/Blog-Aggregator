@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import * as constants from '@/lib/constants';
 import type { HealthApiResponse } from '@/lib/types';
 
+// Force dynamic rendering for this API route (required for serverless deployment)
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // Track server start time for uptime calculation
 const startTime = Date.now();
 

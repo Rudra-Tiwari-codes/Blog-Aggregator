@@ -4,6 +4,10 @@ import * as constants from '@/lib/constants';
 import { logger } from '@/lib/logger';
 import type { PostsApiResponse, CleanPost, ApiErrorResponse } from '@/lib/types';
 
+// Force dynamic rendering for this API route (required for serverless deployment)
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function GET(
     request: Request
 ): Promise<NextResponse<PostsApiResponse | ApiErrorResponse>> {

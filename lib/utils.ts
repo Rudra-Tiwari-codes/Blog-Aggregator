@@ -77,7 +77,7 @@ export async function fetchBloggerPosts(): Promise<Post[]> {
       const title = entry.title?._ || entry.title || 'Untitled';
       const link = Array.isArray(entry.link)
         ? entry.link.find((l: { $: { rel: string; href: string } }) => l.$.rel === 'alternate')?.$
-          .href
+            .href
         : entry.link?.$.href || '';
       const published = entry.published || new Date().toISOString();
       const content = entry.content?._ || entry.content || '';
