@@ -1,7 +1,5 @@
 # Blog Aggregator
 
-![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?logo=javascript&logoColor=black)
-![Vercel](https://img.shields.io/badge/Deployed-Vercel-black?logo=vercel)
 [![Live Demo](https://img.shields.io/badge/Demo-Live-success)](https://rudra-blog-aggregator.vercel.app)
 
 ## Problem Statement
