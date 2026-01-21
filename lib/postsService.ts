@@ -18,6 +18,7 @@ async function fetchAllPosts(): Promise<Post[]> {
   try {
     logger.info('Fetching Blogspot posts...');
     const bloggerPosts = await fetchBloggerPosts();
+    logger.info(`Blogger fetch returned ${bloggerPosts.length} posts`);
     allPosts.push(...bloggerPosts);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -29,18 +30,23 @@ async function fetchAllPosts(): Promise<Post[]> {
     const mediumUsername = process.env.MEDIUM_USERNAME || 'rudratech';
     logger.info(`Fetching Medium posts for @${mediumUsername}...`);
     const mediumPosts = await fetchMediumPosts(mediumUsername);
+    logger.info(`Medium fetch returned ${mediumPosts.length} posts`);
     allPosts.push(...mediumPosts);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error(`Error fetching Medium posts: ${errorMessage}`);
   }
 
+  logger.info(`Total posts before deduplication: ${allPosts.length}`);
+
   // Deduplicate posts
   const uniquePosts = deduplicatePosts(allPosts);
+  logger.info(`Total posts after deduplication: ${uniquePosts.length}`);
 
-  // Ensure at least one source succeeded
+  // If no posts found, log warning but don't throw - return empty array
   if (uniquePosts.length === 0) {
-    throw new Error('All blog sources are currently unavailable. Please try again later.');
+    logger.warn('No posts retrieved from any source - returning empty array');
+    return [];
   }
 
   // Process posts with summaries
