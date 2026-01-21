@@ -15,12 +15,6 @@ module.exports = {
     '.next/',
     'out/',
     'coverage/',
-    'public/',
-    // Legacy directories (to be removed after migration verification)
-    'frontend/',
-    'backend/',
-    'api/',
-    'middleware/',
   ],
   rules: {
     'no-console': 'off', // Allow console in Next.js for logging
