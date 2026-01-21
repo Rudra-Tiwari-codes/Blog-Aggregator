@@ -64,7 +64,7 @@ export default function PostCard({ post }: PostCardProps) {
       <div className="post-meta">
         <span className="post-source-badge">{post.source}</span>
         <span className="post-date">{formatDate(post.published)}</span>
-        <span className="post-reading-time">📖 {readingTime}</span>
+        <span className="post-reading-time">{readingTime}</span>
         <BookmarkButton postLink={post.link} postTitle={post.title} />
       </div>
 
