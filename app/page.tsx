@@ -7,9 +7,8 @@ import PostCard from '@/components/PostCard';
 import Pagination from '@/components/Pagination';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorMessage from '@/components/ErrorMessage';
+import { POSTS_PER_PAGE } from '@/lib/constants';
 import type { CleanPost, SearchResult } from '@/lib/types';
-
-const POSTS_PER_PAGE = 6;
 
 export default function Home() {
   const [posts, setPosts] = useState<CleanPost[]>([]);
@@ -28,8 +27,8 @@ export default function Home() {
   const latestPost =
     posts.length > 0
       ? posts.reduce((latest, current) =>
-          new Date(current.published) > new Date(latest.published) ? current : latest
-        )
+        new Date(current.published) > new Date(latest.published) ? current : latest
+      )
       : null;
 
   // Pagination calculations
