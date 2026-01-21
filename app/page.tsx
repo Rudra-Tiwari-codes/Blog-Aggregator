@@ -7,6 +7,7 @@ import PostCard from '@/components/PostCard';
 import Pagination from '@/components/Pagination';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorMessage from '@/components/ErrorMessage';
+import SavedPosts from '@/components/SavedPosts';
 import { POSTS_PER_PAGE } from '@/lib/constants';
 import type { CleanPost, SearchResult } from '@/lib/types';
 
@@ -155,6 +156,9 @@ export default function Home() {
           {/* Main Content (hidden during search) */}
           {searchResults === null && (
             <>
+              {/* Saved Posts Section */}
+              <SavedPosts posts={posts} />
+
               {/* Featured/Latest Post */}
               {latestPost && (
                 <div className="latest-post-container" style={{ marginBottom: '2rem' }}>
