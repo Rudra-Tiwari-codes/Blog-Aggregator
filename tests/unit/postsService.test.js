@@ -131,12 +131,13 @@ describe('Posts Service', () => {
       expect(result[1].title).toBe('Old Post');
     });
 
-    test('should throw error if all sources fail', async () => {
+    test('should return empty array if all sources fail', async () => {
       fetchBloggerPosts.mockRejectedValue(new Error('Blogger failed'));
       fetchMediumPosts.mockRejectedValue(new Error('Medium failed'));
       deduplicatePosts.mockImplementation(posts => posts);
 
-      await expect(getPosts(true)).rejects.toThrow('All blog sources are currently unavailable');
+      const result = await getPosts(true);
+      expect(result).toEqual([]);
     });
   });
 

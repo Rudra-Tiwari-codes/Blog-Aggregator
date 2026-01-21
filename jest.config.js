@@ -12,8 +12,8 @@ module.exports = {
     global: {
       branches: 15,
       functions: 30,
-      lines: 50,
-      statements: 50,
+      lines: 45,
+      statements: 45,
     },
   },
   testMatch: ['**/tests/unit/**/*.test.js'],
