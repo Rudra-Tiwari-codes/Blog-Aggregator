@@ -1,4 +1,7 @@
+'use client';
+
 import type { CleanPost, SearchResult } from '@/lib/types';
+import BookmarkButton from './BookmarkButton';
 
 type PostType = CleanPost | SearchResult;
 
@@ -32,12 +35,37 @@ function cleanAndTruncateSummary(rawContent: string | undefined, maxLength = 200
   return cleaned;
 }
 
+/**
+ * Calculate estimated reading time based on summary length
+ * Average reading speed is ~200-250 words per minute
+ * Since we have summaries (not full content), we estimate based on typical blog post length
+ */
+function calculateReadingTime(summary: string | undefined): string {
+  if (!summary) return '2 min read';
+
+  // Count words in summary
+  const wordCount = summary.split(/\s+/).filter(w => w.length > 0).length;
+
+  // Estimate full post length: summaries are typically 10-15% of full content
+  // If summary is ~50 words, full post is likely ~400-500 words
+  const estimatedFullWords = Math.max(wordCount * 8, 200);
+
+  // Calculate reading time (200 words per minute average)
+  const readingMinutes = Math.ceil(estimatedFullWords / 200);
+
+  return `${readingMinutes} min read`;
+}
+
 export default function PostCard({ post }: PostCardProps) {
+  const readingTime = calculateReadingTime(post.summary);
+
   return (
     <article className="post-card">
       <div className="post-meta">
         <span className="post-source-badge">{post.source}</span>
         <span className="post-date">{formatDate(post.published)}</span>
+        <span className="post-reading-time">📖 {readingTime}</span>
+        <BookmarkButton postLink={post.link} postTitle={post.title} />
       </div>
 
       <div className="post-title">

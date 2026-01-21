@@ -1038,6 +1038,40 @@ a:hover::after {
   opacity: 0.8;
 }
 
+.post-reading-time {
+  color: var(--sage);
+  opacity: 0.9;
+  font-size: 0.8rem;
+}
+
+.bookmark-btn {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  color: var(--silver);
+  opacity: 0.6;
+}
+
+.bookmark-btn:hover {
+  opacity: 1;
+  background: var(--steel);
+  transform: scale(1.1);
+}
+
+.bookmark-btn.bookmarked {
+  color: var(--gold);
+  opacity: 1;
+}
+
+.bookmark-btn.bookmarked:hover {
+  color: var(--rust);
+}
+
 .post-title {
   margin-bottom: var(--gap-sm);
 }
