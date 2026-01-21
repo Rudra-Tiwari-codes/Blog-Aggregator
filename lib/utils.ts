@@ -8,11 +8,15 @@ import type { Post, SearchResult } from './types';
 /**
  * Create an AbortSignal that times out after the specified duration
  * Compatible with all Node.js 18+ versions (AbortSignal.timeout requires 18.14.1+)
+ * Returns both the signal and a cleanup function to prevent memory leaks
  */
-function createTimeoutSignal(timeoutMs: number): AbortSignal {
+function createTimeoutSignal(timeoutMs: number): { signal: AbortSignal; cleanup: () => void } {
   const controller = new AbortController();
-  setTimeout(() => controller.abort(), timeoutMs);
-  return controller.signal;
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  return {
+    signal: controller.signal,
+    cleanup: () => clearTimeout(timeoutId),
+  };
 }
 
 /**
@@ -47,13 +51,14 @@ export async function fetchBloggerPosts(): Promise<Post[]> {
     logger.info(`Fetching Blogspot posts from: ${url}`);
 
     let response: Response;
+    const { signal, cleanup } = createTimeoutSignal(constants.API_REQUEST_TIMEOUT_MS);
     try {
       response = await retryWithBackoff(async () => {
         const res = await fetch(url, {
           headers: {
             'User-Agent': constants.USER_AGENT,
           },
-          signal: createTimeoutSignal(constants.API_REQUEST_TIMEOUT_MS),
+          signal,
         });
 
         if (!res.ok) {
@@ -70,6 +75,8 @@ export async function fetchBloggerPosts(): Promise<Post[]> {
       const msg = fetchError instanceof Error ? fetchError.message : 'Unknown fetch error';
       logger.error(`Blogger fetch failed: ${msg}`);
       return []; // Return empty array instead of throwing
+    } finally {
+      cleanup();
     }
 
     let xml: string;
@@ -154,13 +161,14 @@ export async function fetchMediumPosts(username: string): Promise<Post[]> {
     logger.info(`Fetching Medium posts from: ${rssUrl}`);
 
     let response: Response;
+    const { signal, cleanup } = createTimeoutSignal(constants.API_REQUEST_TIMEOUT_MS);
     try {
       response = await retryWithBackoff(async () => {
         const res = await fetch(rssUrl, {
           headers: {
             'User-Agent': constants.USER_AGENT,
           },
-          signal: createTimeoutSignal(constants.API_REQUEST_TIMEOUT_MS),
+          signal,
         });
 
         if (!res.ok) {
@@ -177,6 +185,8 @@ export async function fetchMediumPosts(username: string): Promise<Post[]> {
       const msg = fetchError instanceof Error ? fetchError.message : 'Unknown fetch error';
       logger.error(`Medium fetch failed: ${msg}`);
       return []; // Return empty array instead of throwing
+    } finally {
+      cleanup();
     }
 
     let xml: string;
