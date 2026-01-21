@@ -44,51 +44,94 @@ async function retryWithBackoff<T>(
 export async function fetchBloggerPosts(): Promise<Post[]> {
   try {
     const url = `${constants.BLOGGER_RSS_URL}?max-results=${constants.BLOGGER_MAX_POSTS}`;
+    logger.info(`Fetching Blogspot posts from: ${url}`);
 
-    const response = await retryWithBackoff(async () => {
-      const res = await fetch(url, {
-        headers: {
-          'User-Agent': constants.USER_AGENT,
-        },
-        signal: createTimeoutSignal(constants.API_REQUEST_TIMEOUT_MS),
+    let response: Response;
+    try {
+      response = await retryWithBackoff(async () => {
+        const res = await fetch(url, {
+          headers: {
+            'User-Agent': constants.USER_AGENT,
+          },
+          signal: createTimeoutSignal(constants.API_REQUEST_TIMEOUT_MS),
+        });
+
+        if (!res.ok) {
+          throw new ExternalAPIError(
+            `Blogger RSS error: ${res.status}`,
+            'Blogger',
+            new Error(res.statusText)
+          );
+        }
+
+        return res;
       });
+    } catch (fetchError) {
+      const msg = fetchError instanceof Error ? fetchError.message : 'Unknown fetch error';
+      logger.error(`Blogger fetch failed: ${msg}`);
+      return []; // Return empty array instead of throwing
+    }
 
-      if (!res.ok) {
-        throw new ExternalAPIError(
-          `Blogger RSS error: ${res.status}`,
-          'Blogger',
-          new Error(res.statusText)
-        );
-      }
-
-      return res;
-    });
-
-    const xml = await response.text();
+    let xml: string;
+    try {
+      xml = await response.text();
+      logger.info(`Blogger XML received: ${xml.length} chars`);
+    } catch (textError) {
+      logger.error('Failed to read Blogger response text');
+      return [];
+    }
 
     // Parse XML using xml2js
-    const result = await parseStringPromise(xml, { explicitArray: false });
+    let result: Record<string, unknown>;
+    try {
+      result = await parseStringPromise(xml, { explicitArray: false });
+    } catch (parseError) {
+      const msg = parseError instanceof Error ? parseError.message : 'Unknown parse error';
+      logger.error(`Blogger XML parse failed: ${msg}`);
+      return [];
+    }
 
     const posts: Post[] = [];
-    const entries = result.feed?.entry || [];
+    const entries = (result as { feed?: { entry?: unknown } }).feed?.entry || [];
     const entriesArray = Array.isArray(entries) ? entries : [entries];
 
     for (const entry of entriesArray) {
-      const title = entry.title?._ || entry.title || 'Untitled';
-      const link = Array.isArray(entry.link)
-        ? entry.link.find((l: { $: { rel: string; href: string } }) => l.$.rel === 'alternate')?.$
-            .href
-        : entry.link?.$.href || '';
-      const published = entry.published || new Date().toISOString();
-      const content = entry.content?._ || entry.content || '';
+      try {
+        const typedEntry = entry as Record<string, unknown>;
+        const titleObj = typedEntry.title;
+        const title = (typeof titleObj === 'object' && titleObj && '_' in titleObj)
+          ? (titleObj as { _: string })._
+          : String(titleObj || 'Untitled');
 
-      posts.push({
-        title,
-        link,
-        published,
-        content: extractReadableText(content),
-        source: constants.BLOG_SOURCE_BLOGSPOT as 'Blogspot',
-      });
+        const linkArray = typedEntry.link;
+        let link = '';
+        if (Array.isArray(linkArray)) {
+          const altLink = linkArray.find((l) => {
+            const typed = l as { $?: { rel?: string; href?: string } };
+            return typed.$?.rel === 'alternate';
+          }) as { $?: { href?: string } } | undefined;
+          link = altLink?.$?.href || '';
+        } else if (linkArray && typeof linkArray === 'object') {
+          const typed = linkArray as { $?: { href?: string } };
+          link = typed.$?.href || '';
+        }
+
+        const published = String(typedEntry.published || new Date().toISOString());
+        const contentObj = typedEntry.content;
+        const content = (typeof contentObj === 'object' && contentObj && '_' in contentObj)
+          ? (contentObj as { _: string })._
+          : String(contentObj || '');
+
+        posts.push({
+          title,
+          link,
+          published,
+          content: extractReadableText(content),
+          source: constants.BLOG_SOURCE_BLOGSPOT as 'Blogspot',
+        });
+      } catch (entryError) {
+        logger.warn('Failed to process a Blogger entry, skipping');
+      }
     }
 
     logger.info(`Fetched ${posts.length} Blogspot posts`);
@@ -96,7 +139,7 @@ export async function fetchBloggerPosts(): Promise<Post[]> {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error(`Error fetching Blogger posts: ${errorMessage}`);
-    throw new ExternalAPIError('Failed to fetch Blogger posts', 'Blogger', error as Error);
+    return []; // Return empty array instead of throwing
   }
 }
 
@@ -106,48 +149,76 @@ export async function fetchBloggerPosts(): Promise<Post[]> {
 export async function fetchMediumPosts(username: string): Promise<Post[]> {
   try {
     const rssUrl = `https://medium.com/feed/@${username}`;
+    logger.info(`Fetching Medium posts from: ${rssUrl}`);
 
-    const response = await retryWithBackoff(async () => {
-      const res = await fetch(rssUrl, {
-        headers: {
-          'User-Agent': constants.USER_AGENT,
-        },
-        signal: createTimeoutSignal(constants.API_REQUEST_TIMEOUT_MS),
+    let response: Response;
+    try {
+      response = await retryWithBackoff(async () => {
+        const res = await fetch(rssUrl, {
+          headers: {
+            'User-Agent': constants.USER_AGENT,
+          },
+          signal: createTimeoutSignal(constants.API_REQUEST_TIMEOUT_MS),
+        });
+
+        if (!res.ok) {
+          throw new ExternalAPIError(
+            `Medium RSS error: ${res.status}`,
+            'Medium',
+            new Error(res.statusText)
+          );
+        }
+
+        return res;
       });
+    } catch (fetchError) {
+      const msg = fetchError instanceof Error ? fetchError.message : 'Unknown fetch error';
+      logger.error(`Medium fetch failed: ${msg}`);
+      return []; // Return empty array instead of throwing
+    }
 
-      if (!res.ok) {
-        throw new ExternalAPIError(
-          `Medium RSS error: ${res.status}`,
-          'Medium',
-          new Error(res.statusText)
-        );
-      }
-
-      return res;
-    });
-
-    const xml = await response.text();
+    let xml: string;
+    try {
+      xml = await response.text();
+      logger.info(`Medium XML received: ${xml.length} chars`);
+    } catch (textError) {
+      logger.error('Failed to read Medium response text');
+      return [];
+    }
 
     // Parse XML using xml2js
-    const result = await parseStringPromise(xml, { explicitArray: false });
+    let result: Record<string, unknown>;
+    try {
+      result = await parseStringPromise(xml, { explicitArray: false });
+    } catch (parseError) {
+      const msg = parseError instanceof Error ? parseError.message : 'Unknown parse error';
+      logger.error(`Medium XML parse failed: ${msg}`);
+      return [];
+    }
 
     const posts: Post[] = [];
-    const items = result.rss?.channel?.item || [];
+    const rss = result.rss as { channel?: { item?: unknown } } | undefined;
+    const items = rss?.channel?.item || [];
     const itemsArray = Array.isArray(items) ? items : [items];
 
     for (const item of itemsArray) {
-      const title = item.title || 'Untitled';
-      const link = item.link || '';
-      const pubDate = item.pubDate || new Date().toISOString();
-      const content = item['content:encoded'] || item.description || '';
+      try {
+        const typedItem = item as Record<string, unknown>;
+        const title = String(typedItem.title || 'Untitled');
+        const link = String(typedItem.link || '');
+        const pubDate = String(typedItem.pubDate || new Date().toISOString());
+        const content = String(typedItem['content:encoded'] || typedItem.description || '');
 
-      posts.push({
-        title,
-        link,
-        published: new Date(pubDate).toISOString(),
-        content: extractReadableText(content),
-        source: constants.BLOG_SOURCE_MEDIUM as 'Medium',
-      });
+        posts.push({
+          title,
+          link,
+          published: new Date(pubDate).toISOString(),
+          content: extractReadableText(content),
+          source: constants.BLOG_SOURCE_MEDIUM as 'Medium',
+        });
+      } catch (itemError) {
+        logger.warn('Failed to process a Medium item, skipping');
+      }
     }
 
     logger.info(`Fetched ${posts.length} Medium posts`);
@@ -155,7 +226,7 @@ export async function fetchMediumPosts(username: string): Promise<Post[]> {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error(`Error fetching Medium posts: ${errorMessage}`);
-    throw new ExternalAPIError('Failed to fetch Medium posts', 'Medium', error as Error);
+    return []; // Return empty array instead of throwing
   }
 }
 
