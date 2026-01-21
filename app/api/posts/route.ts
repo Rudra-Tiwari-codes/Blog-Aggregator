@@ -7,6 +7,8 @@ import type { PostsApiResponse, CleanPost, ApiErrorResponse } from '@/lib/types'
 // Force dynamic rendering for this API route (required for serverless deployment)
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+// Increase max duration for Vercel serverless (default is 10s, max is 60s on hobby)
+export const maxDuration = 60;
 
 export async function GET(
     request: Request
@@ -45,15 +47,23 @@ export async function GET(
         );
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        logger.error(`Error in /api/posts: ${errorMessage}`);
+        const errorStack = error instanceof Error ? error.stack : '';
+        const errorName = error instanceof Error ? error.name : 'UnknownError';
+
+        logger.error(`Error in /api/posts: ${errorName}: ${errorMessage}`);
+        if (errorStack) {
+            logger.error(`Stack trace: ${errorStack}`);
+        }
 
         return NextResponse.json(
             {
                 success: false,
                 error: 'Failed to fetch posts',
                 message: errorMessage,
+                details: process.env.NODE_ENV === 'development' ? errorStack : undefined,
             },
             { status: constants.HTTP_INTERNAL_ERROR }
         );
     }
 }
+

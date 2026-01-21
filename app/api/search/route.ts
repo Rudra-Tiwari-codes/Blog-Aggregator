@@ -8,6 +8,8 @@ import type { SearchApiResponse, SearchResult, ApiErrorResponse } from '@/lib/ty
 // Force dynamic rendering for this API route (required for serverless deployment)
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+// Increase max duration for Vercel serverless (default is 10s, max is 60s on hobby)
+export const maxDuration = 60;
 
 interface SearchRequestBody {
     query?: string;
