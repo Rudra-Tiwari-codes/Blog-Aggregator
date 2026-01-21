@@ -10,12 +10,7 @@ module.exports = {
     ecmaVersion: 2021,
     sourceType: 'module',
   },
-  ignorePatterns: [
-    'node_modules/',
-    '.next/',
-    'out/',
-    'coverage/',
-  ],
+  ignorePatterns: ['node_modules/', '.next/', 'out/', 'coverage/'],
   rules: {
     'no-console': 'off', // Allow console in Next.js for logging
     'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],

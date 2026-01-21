@@ -99,14 +99,15 @@ export async function fetchBloggerPosts(): Promise<Post[]> {
       try {
         const typedEntry = entry as Record<string, unknown>;
         const titleObj = typedEntry.title;
-        const title = (typeof titleObj === 'object' && titleObj && '_' in titleObj)
-          ? (titleObj as { _: string })._
-          : String(titleObj || 'Untitled');
+        const title =
+          typeof titleObj === 'object' && titleObj && '_' in titleObj
+            ? (titleObj as { _: string })._
+            : String(titleObj || 'Untitled');
 
         const linkArray = typedEntry.link;
         let link = '';
         if (Array.isArray(linkArray)) {
-          const altLink = linkArray.find((l) => {
+          const altLink = linkArray.find(l => {
             const typed = l as { $?: { rel?: string; href?: string } };
             return typed.$?.rel === 'alternate';
           }) as { $?: { href?: string } } | undefined;
@@ -118,9 +119,10 @@ export async function fetchBloggerPosts(): Promise<Post[]> {
 
         const published = String(typedEntry.published || new Date().toISOString());
         const contentObj = typedEntry.content;
-        const content = (typeof contentObj === 'object' && contentObj && '_' in contentObj)
-          ? (contentObj as { _: string })._
-          : String(contentObj || '');
+        const content =
+          typeof contentObj === 'object' && contentObj && '_' in contentObj
+            ? (contentObj as { _: string })._
+            : String(contentObj || '');
 
         posts.push({
           title,
