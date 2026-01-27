@@ -6,7 +6,8 @@ export const MILLISECONDS_PER_SECOND = 1000;
 export const SECONDS_PER_MINUTE = 60;
 
 // Cache Configuration
-export const CACHE_DURATION_MINUTES = 30;
+// Reduced to 5 minutes for faster updates when new blogs are published
+export const CACHE_DURATION_MINUTES = 5;
 export const CACHE_DURATION_MS =
   CACHE_DURATION_MINUTES * SECONDS_PER_MINUTE * MILLISECONDS_PER_SECOND;
 export const CACHE_FILE_PATH = 'data/posts.json';
