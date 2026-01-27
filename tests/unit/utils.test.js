@@ -15,8 +15,8 @@ const {
 
 describe('Utility Functions', () => {
   describe('Constants', () => {
-    test('CACHE_DURATION_MS should be 30 minutes', () => {
-      expect(constants.CACHE_DURATION_MS).toBe(30 * 60 * 1000);
+    test('CACHE_DURATION_MS should be 5 minutes', () => {
+      expect(constants.CACHE_DURATION_MS).toBe(5 * 60 * 1000);
     });
 
     test('HTTP status codes should be correct', () => {

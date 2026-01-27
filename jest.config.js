@@ -3,6 +3,8 @@ module.exports = {
   coverageDirectory: 'coverage',
   collectCoverageFrom: [
     'lib/**/*.ts',
+    // Exclude client-side tracking utilities (runs in browser, not testable in Node)
+    '!lib/tracking.ts',
     '!**/node_modules/**',
     '!**/tests/**',
     '!**/coverage/**',
