@@ -51,11 +51,7 @@ export default function Header({ onSearch, onClear }: HeaderProps) {
           </div>
 
           <nav className="header-nav">
-            <Link
-              href="/saved"
-              className="nav-link saved-link"
-              title="View saved posts"
-            >
+            <Link href="/saved" className="nav-link saved-link" title="View saved posts">
               ★ {savedCount > 0 && <span className="saved-count">{savedCount}</span>}
             </Link>
           </nav>

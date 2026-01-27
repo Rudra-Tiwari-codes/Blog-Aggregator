@@ -2,11 +2,15 @@
 
 import type { CleanPost, SearchResult } from '@/lib/types';
 import BookmarkButton from './BookmarkButton';
+import ShareButtons from './ShareButtons';
+import { addToHistory, trackClick } from '@/lib/tracking';
 
 type PostType = CleanPost | SearchResult;
 
 interface PostCardProps {
   post: PostType;
+  isFocused?: boolean;
+  onFocus?: () => void;
 }
 
 function formatDate(dateString: string): string {
@@ -56,11 +60,23 @@ function calculateReadingTime(summary: string | undefined): string {
   return `${readingMinutes} min read`;
 }
 
-export default function PostCard({ post }: PostCardProps) {
+export default function PostCard({ post, isFocused = false, onFocus }: PostCardProps) {
   const readingTime = calculateReadingTime(post.summary);
 
+  const handleClick = () => {
+    // Track the click for popular posts
+    trackClick(post.link);
+    // Add to reading history
+    addToHistory(post.link, post.title);
+  };
+
   return (
-    <article className="post-card">
+    <article
+      className={`post-card ${isFocused ? 'focused' : ''}`}
+      tabIndex={0}
+      onFocus={onFocus}
+      data-post-link={post.link}
+    >
       <div className="post-meta">
         <span className="post-source-badge">{post.source}</span>
         <span className="post-date">{formatDate(post.published)}</span>
@@ -69,16 +85,25 @@ export default function PostCard({ post }: PostCardProps) {
       </div>
 
       <div className="post-title">
-        <a href={post.link} target="_blank" rel="noopener noreferrer">
+        <a href={post.link} target="_blank" rel="noopener noreferrer" onClick={handleClick}>
           {post.title || 'Untitled Post'}
         </a>
       </div>
 
       <div className="post-summary">{cleanAndTruncateSummary(post.summary)}</div>
 
-      <a className="read-more" href={post.link} target="_blank" rel="noopener noreferrer">
-        Read More
-      </a>
+      <div className="post-actions">
+        <a
+          className="read-more"
+          href={post.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={handleClick}
+        >
+          Read More
+        </a>
+        <ShareButtons url={post.link} title={post.title} />
+      </div>
     </article>
   );
 }

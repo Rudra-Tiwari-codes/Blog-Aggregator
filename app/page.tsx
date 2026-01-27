@@ -1,12 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import PostCard from '@/components/PostCard';
 import Pagination from '@/components/Pagination';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorMessage from '@/components/ErrorMessage';
+import ReadingProgress from '@/components/ReadingProgress';
+import CategoryFilter, { filterPostsByCategory } from '@/components/CategoryFilter';
+import PopularPosts from '@/components/PopularPosts';
 import { POSTS_PER_PAGE } from '@/lib/constants';
 import type { CleanPost, SearchResult } from '@/lib/types';
 
@@ -18,6 +21,8 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [mediumPage, setMediumPage] = useState(1);
   const [blogspotPage, setBlogspotPage] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [focusedIndex, setFocusedIndex] = useState<number>(-1);
 
   // Separate posts by source
   const mediumPosts = posts.filter(p => p.source === 'Medium');
@@ -27,19 +32,27 @@ export default function Home() {
   const latestPost =
     posts.length > 0
       ? posts.reduce((latest, current) =>
-        new Date(current.published) > new Date(latest.published) ? current : latest
-      )
+          new Date(current.published) > new Date(latest.published) ? current : latest
+        )
       : null;
 
-  // Pagination calculations
-  const mediumTotalPages = Math.ceil(mediumPosts.length / POSTS_PER_PAGE);
-  const blogspotTotalPages = Math.ceil(blogspotPosts.length / POSTS_PER_PAGE);
+  // Filter posts by category first, then paginate
+  const activeMediumPosts = selectedCategory
+    ? filterPostsByCategory(mediumPosts, selectedCategory)
+    : mediumPosts;
+  const activeBlogspotPosts = selectedCategory
+    ? filterPostsByCategory(blogspotPosts, selectedCategory)
+    : blogspotPosts;
 
-  const paginatedMedium = mediumPosts.slice(
+  // Pagination calculations
+  const mediumTotalPages = Math.ceil(activeMediumPosts.length / POSTS_PER_PAGE);
+  const blogspotTotalPages = Math.ceil(activeBlogspotPosts.length / POSTS_PER_PAGE);
+
+  const paginatedMedium = activeMediumPosts.slice(
     (mediumPage - 1) * POSTS_PER_PAGE,
     mediumPage * POSTS_PER_PAGE
   );
-  const paginatedBlogspot = blogspotPosts.slice(
+  const paginatedBlogspot = activeBlogspotPosts.slice(
     (blogspotPage - 1) * POSTS_PER_PAGE,
     blogspotPage * POSTS_PER_PAGE
   );
@@ -110,17 +123,64 @@ export default function Home() {
     setError(null);
   };
 
+  // Keyboard navigation
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (searchResults !== null) return; // Disable during search
+
+      const postCards = document.querySelectorAll('.post-card');
+      if (postCards.length === 0) return;
+
+      if (e.key === 'ArrowDown' || e.key === 'j') {
+        e.preventDefault();
+        const newIndex = Math.min(focusedIndex + 1, postCards.length - 1);
+        setFocusedIndex(newIndex);
+        (postCards[newIndex] as HTMLElement).focus();
+      } else if (e.key === 'ArrowUp' || e.key === 'k') {
+        e.preventDefault();
+        const newIndex = Math.max(focusedIndex - 1, 0);
+        setFocusedIndex(newIndex);
+        (postCards[newIndex] as HTMLElement).focus();
+      } else if (e.key === 'Enter' && focusedIndex >= 0) {
+        const focused = postCards[focusedIndex];
+        const link = focused?.querySelector('a.read-more') as HTMLAnchorElement;
+        if (link) link.click();
+      }
+    },
+    [focusedIndex, searchResults]
+  );
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
   if (loading) {
-    return <LoadingSpinner />;
+    return (
+      <>
+        <ReadingProgress />
+        <LoadingSpinner />
+      </>
+    );
   }
 
   return (
     <>
+      <ReadingProgress />
       <Header onSearch={handleSearch} onClear={handleClearSearch} />
 
       <main className="main-content">
         <div className="container">
           {error && !searchResults && <ErrorMessage message={error} />}
+
+          {/* Category Filter - only show when not searching */}
+          {searchResults === null && (
+            <CategoryFilter
+              posts={posts}
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+            />
+          )}
 
           {/* Search Results */}
           {searchResults !== null && (
@@ -155,6 +215,9 @@ export default function Home() {
           {/* Main Content (hidden during search) */}
           {searchResults === null && (
             <>
+              {/* Popular/Trending Posts */}
+              <PopularPosts posts={posts} />
+
               {/* Featured/Latest Post */}
               {latestPost && (
                 <div className="latest-post-container" style={{ marginBottom: '2rem' }}>
