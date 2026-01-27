@@ -41,7 +41,9 @@ export async function GET(
             {
                 status: constants.HTTP_OK,
                 headers: {
-                    'Cache-Control': `public, max-age=${constants.CACHE_DURATION_MS / constants.MILLISECONDS_PER_SECOND}`,
+                    // Disable caching to ensure fresh data on each request
+                    // The server handles its own in-memory caching
+                    'Cache-Control': 'no-store, no-cache, must-revalidate',
                 },
             }
         );
