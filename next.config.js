@@ -28,7 +28,11 @@ const nextConfig = {
       {
         source: '/api/:path*',
         headers: [
-          { key: 'Cache-Control', value: 'public, max-age=1800, stale-while-revalidate=3600' },
+          // Disable edge caching for API routes to ensure fresh RSS data
+          // The API handles its own in-memory caching with shorter TTL
+          { key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate, proxy-revalidate' },
+          { key: 'Pragma', value: 'no-cache' },
+          { key: 'Expires', value: '0' },
         ],
       },
     ];
